@@ -1,0 +1,64 @@
+﻿@model string
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card w-100">@Model</div>
+        <div class="card w-100">
+
+            <span class="card-body">Token : <label class="bg-white text-black h3 token">@Model</label> </span>
+            <span class="card-footer">
+                <button type="button" id="submit">Get Token</button>
+            </span>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @* <script src="https://cdnjs.cloudflare.com/ajax/libs/jsonwebtoken/8.5.1/jsonwebtoken.min.js"></script> *@
+    <Script>
+
+        $(document).ready(function () {
+
+            $("#submit").click(function () {
+                SetButton();
+            });
+
+            var SetButton = function () {
+                var url = '@Url.Action("GetCachedToken","Home")';
+                $.ajax({
+                    url: url,
+                    method: "get",
+                    success: function (data) {
+                        $(".token").text(data);
+
+                        // const token = JSON.parse(data);
+                        //const jwt = require('jsonwebtoken');
+
+                        //// Your JWT token
+
+                        //try {
+                        //    debugger;
+                        //    const decodedToken = jwt.decode(token);
+
+                        //    if (decodedToken) {
+                        //        console.log('Decoded Token:', decodedToken);
+                        //    } else {
+                        //        console.log('Failed to decode JWT.');
+                        //    }
+                        //} catch (error) {
+                        //    console.error('Error decoding JWT:', error.message);
+                        //}
+
+                    }
+                });
+            }
+        });
+
+    </Script>
+
+}
