@@ -1,10 +1,13 @@
 ﻿using computerwala.Models;
+using DBService.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json.Serialization;
 
 namespace computerwala.Controllers
@@ -13,14 +16,18 @@ namespace computerwala.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private IMemoryCache _cache;
-        public HomeController(ILogger<HomeController> logger, IMemoryCache cache)
+        private IAuthentication _authentication;
+        public HomeController(ILogger<HomeController> logger, IMemoryCache cache,IAuthentication authentication)
         {
             _logger = logger;
             _cache = cache;
+            _authentication = authentication;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
+            
             var token = GetCachedToken();
             //token = await GetToken();
 
@@ -55,23 +62,21 @@ namespace computerwala.Controllers
             else
             {
                 // Token is not in the cache or has expired
-                jwtToken =  await GetToken();
+                jwtToken =  _authentication.GetToken();
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var decodedJwtToken = tokenHandler.ReadToken(jwtToken) as JwtSecurityToken;
+
                 if (!string.IsNullOrEmpty(jwtToken))
                 {
+                    var validMinute = (DateTime.Now - decodedJwtToken.ValidTo);
                     // Cache the token with a specified expiration time (e.g., tokenExpirationMinutes)
                     var cacheEntryOptions = new MemoryCacheEntryOptions
                     {
-                        AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10)
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
                     };
                     _logger.LogInformation($"Setting new token to cache: {jwtToken}");
                     _cache.Set("JwtToken", jwtToken, cacheEntryOptions);
                 }
-                //else
-                //{
-                //    // Handle the case where obtaining a new token fails
-                //    //context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                //    //return;
-                //}
             }
 
             // Set the token in the request headers
@@ -80,28 +85,11 @@ namespace computerwala.Controllers
             return jwtToken; // Or handle the absence of a token as needed
 
         }
-        public async Task<string> GetToken()
-        {
-            var url = GetCurrentUrl();
-            _logger.LogInformation($"Host : {url}");
-            _logger.LogInformation($"Requesting token");
-            RestClient client = new RestClient(url);
-            RestRequest restRequest = new RestRequest("/api/Authentication/GetToken", Method.Get);
-            restRequest.AddHeader("Content-Type", "application/json");
 
-            var resp = await client.GetAsync(restRequest);
-            if (resp.IsSuccessStatusCode)
-            {
-                _logger.LogInformation($"Api response : {resp.Content}");
-                return JsonConvert.DeserializeObject<string>(resp.Content);
-            }
-            else
-                return "";
-            
-        }
-
+        [Authorize]
         public IActionResult Privacy()
         {
+
             return View();
         }
 
