@@ -1,6 +1,10 @@
 ﻿using computerwala.Models;
 using DBService.Interfaces;
+using DBService.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
@@ -17,18 +21,23 @@ namespace computerwala.Controllers
         private readonly ILogger<HomeController> _logger;
         private IMemoryCache _cache;
         private IAuthentication _authentication;
-        public HomeController(ILogger<HomeController> logger, IMemoryCache cache,IAuthentication authentication)
+		private readonly ICWSubscription cWSubscription;
+		private readonly ICWCalender cWCalender;
+		public HomeController(ILogger<HomeController> logger, IMemoryCache cache,IAuthentication authentication,ICWSubscription cWSubscription,
+            ICWCalender calender)
         {
             _logger = logger;
             _cache = cache;
             _authentication = authentication;
+            this.cWSubscription = cWSubscription;
+            this.cWCalender = calender;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            
-            var token = GetCachedToken();
+
+            //var token = GetCachedToken();
             //token = await GetToken();
 
             //RestClient client = new RestClient("https://localhost:7089");
@@ -43,59 +52,45 @@ namespace computerwala.Controllers
             return View();
         }
 
-        public string GetCurrentUrl()
+		[AcceptVerbs("Get", "Post")]
+		[AllowAnonymous]
+		public async Task<IActionResult> IsEmailInUser(string email)
+		{
+            var user = await this.cWSubscription.EmailExists(email);
+
+			if (user.Success&&!JsonConvert.DeserializeObject<bool>(user.Data))
+			{
+				return Json(user.Message);
+			}
+			else
+			{
+				return Json(true);
+			}
+		}
+		public string GetCurrentUrl()
         {
             var currentUrl = $"{this.Request.Scheme}://{this.Request.Host}";
             return currentUrl;
         }
 
-        public async Task<string> GetCachedToken()
+        public async Task<IActionResult> CWCalender()
         {
-            _logger.LogInformation($"In Cached token");
+            var response = await cWCalender.GetCalender();
 
-            if (_cache.TryGetValue("JwtToken", out string jwtToken))
-            {
-                // Token found in the cache
-                _logger.LogInformation($"Returning cached token : {jwtToken}");
-                return jwtToken;
-            }
-            else
-            {
-                // Token is not in the cache or has expired
-                jwtToken =  _authentication.GetToken();
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var decodedJwtToken = tokenHandler.ReadToken(jwtToken) as JwtSecurityToken;
+            var calender = JsonConvert.DeserializeObject<CWCalender>(response.Data);
 
-                if (!string.IsNullOrEmpty(jwtToken))
-                {
-                    var validMinute = (DateTime.Now - decodedJwtToken.ValidTo);
-                    // Cache the token with a specified expiration time (e.g., tokenExpirationMinutes)
-                    var cacheEntryOptions = new MemoryCacheEntryOptions
-                    {
-                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-                    };
-                    _logger.LogInformation($"Setting new token to cache: {jwtToken}");
-                    _cache.Set("JwtToken", jwtToken, cacheEntryOptions);
-                }
-            }
-
-            // Set the token in the request headers
-            HttpContext.Request.Headers.Add("Authorization", "Bearer " + jwtToken);
-
-            return jwtToken; // Or handle the absence of a token as needed
-
-        }
-
-        [Authorize]
-        public IActionResult Privacy()
-        {
-
-            return View();
+            return View("Privacy",calender);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [Route("Error")]
+        [AllowAnonymous]
+        [HttpGet]
+
         public IActionResult Error()
         {
+            ViewBag.statuscode = HttpContext.Response.StatusCode;
+            //ViewBag.address = (HttpContext.Features.Get<IServerVariablesFeature>()["Remote_Address"]);
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

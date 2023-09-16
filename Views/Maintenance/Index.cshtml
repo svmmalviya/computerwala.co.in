@@ -1,5 +1,5 @@
 ﻿@using computerwala.Controllers;
-@model CWSubscriptions;
+@model  CWSubscriptions;
 @inject MaintenanceController maintenance; 
 
 @{
@@ -70,10 +70,11 @@
 					Our website is <span class="m1-txt2">Coming Soon</span>, follow us for update now!
 				</p>
 
-				<form asp-action="Index" method="post" asp-controller="Maintenance" class="contact100-form validate-form">
+				<form asp-action="PostIndex" method="post" asp-controller="Maintenance" class="contact100-form validate-form">
 					<div class="wrap-input100 m-b-20 validate-input" data-validate="Email is required: ex@abc.xyz">
-						<input class="s2-txt1 placeholder0 input100" type="text" name="email" placeholder="Email Address">
-						<span class="focus-input100"></span>
+						<input asp-for="Email" class="s2-txt1 placeholder0 input100"  placeholder="Email Address">
+						<span class="focus-input100" ></span>
+						<span asp-validation-for="Email" class="text-danger p-2" ></span>
 					</div>
 
 					<div class="w-full">
@@ -110,7 +111,9 @@
 
 	<!--===============================================================================================-->
 	<script src="~/Maintenance_assets/vendor/jquery/jquery-3.2.1.min.js"></script>
-	<!--===============================================================================================-->
+
+	<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+	<script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js" </script>
 	<script src="~/Maintenance_assets/vendor/bootstrap/js/popper.js"></script>
 	<script src="~/Maintenance_assets/vendor/bootstrap/js/bootstrap.min.js"></script>
 	<!--===============================================================================================-->

@@ -1,6 +1,35 @@
-﻿@{
+﻿@model CWCalender
+
+@{
     ViewData["Title"] = "Privacy Policy";
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<main role="main" class="w-75 m-auto">
+    <section id="about-us" class="section-bg">
+        <div class="container" data-aos="fade-up">
+            @for (int i = 0; i < Model.Years.Count; i++)
+            {
+                <div class="h3 text-danger">@Model.Years[i].Year </div>
+                <div class="row">
+                    @for (int j = 0; j < Model.Years[i].Month.Count; j++)
+                    {
+                        <div class="col-lg-12 text-center">
+                            <div class="card bg-white p-3" data-aos="fade-up">
+                                <div class="row">
+                                    <div class="h4 text-success"> <span class="h3 text-danger">@Model.Years[i].Year </span> @Model.Years[i].Month[j].Name </div>
+                                    @for (int k = 0; k < Model.Years[i].Month[j].Day.Count; k++)
+                                    {
+                                        <div class="col-lg-4 text-center">
+                                            <span class="h2">@Model.Years[i].Month[j].Day[k].Day.ToString()</span>                                             
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </section>>
+</main>
