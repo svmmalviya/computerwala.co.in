@@ -1,6 +1,116 @@
-﻿@{
+﻿@model CWCalender
+
+@{
     ViewData["Title"] = "Privacy Policy";
+    var dayIndex = 0;
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+
+<section id="about-us" class="section-bg">
+    <div class="container" data-aos="fade-up">
+        <div class="row">
+            @for (int i = 0; i < Model.Years.Count; i++)
+            {
+                @for (int j = 0; j < Model.Years[i].Month.Count; j++)
+                {
+                    <div class="offset-md-1 col-md-5 ">
+                        <div class="card bg-white calenderRow m-3 shadow p-3 w-100 m-auto mb-3" data-aos="fade-up">
+                            <div class="card-title  text-center ">
+                                <div class="h4"> @Model.Years[i].Month[j].Name (@Model.Years[i].Year) </div>
+                            </div>
+
+                            @for (int w = 0; w < Model.Years[i].Month[j].Weekdays.Count; w++)
+                            {
+                                var leavediv = w == 0 || w == 6 ? "bg-danger text-white h4 " : " h5";
+
+                                <div class="row @leavediv">
+                                    <div class="col-md-2 col-2 text-nowrap">@Model.Years[i].Month[j].Weekdays[w].Substring(0,3)</div>
+                                    <div class="col-md-2 text-center col-2 dayclick text-nowrap" data-year="@Model.Years[i].Year" data-month="@Model.Years[i].Month[j].Month"
+                                         data-day="@Model.Years[i].Month[j].Day[w].Day">
+                                        @Model.Years[i].Month[j].Day[(w)].Day
+                                    </div>
+
+                                    <div class="col-md-2 col-2 text-center dayclick text-nowrap"
+                                         data-year="@Model.Years[i].Year" data-month="@Model.Years[i].Month[j].Month"
+                                         data-day="@Model.Years[i].Month[j].Day[w+7].Day">
+                                        @Model.Years[i].Month[j].Day[(w+7)].Day
+                                    </div>
+                                    <div class="col-md-2 col-2 text-center dayclick text-nowrap "
+                                         data-year="@Model.Years[i].Year" data-month="@Model.Years[i].Month[j].Month"
+                                         data-day="@Model.Years[i].Month[j].Day[w+14].Day">
+                                         @Model.Years[i].Month[j].Day[(w+14)].Day
+                                    </div>
+                                    <div class="col-md-2 col-2 text-center dayclick text-nowrap "
+                                         data-year="@Model.Years[i].Year" data-month="@Model.Years[i].Month[j].Month"
+                                         data-day="@Model.Years[i].Month[j].Day[w+21].Day">
+                                         @Model.Years[i].Month[j].Day[(w+21)].Day
+                                    </div>
+
+                                    @if ((w + 28) < Model.Years[i].Month[j].Day.Count)
+                                    {
+                                        <div class="col-md-2 col-2 text-center dayclick text-nowrap"
+                                             data-year="@Model.Years[i].Year" data-month="@Model.Years[i].Month[j].Month"
+                                             data-day="@Model.Years[i].Month[j].Day[w+28].Day">
+                                            @{
+
+                                                                                            @Model.Years[i].Month[j].Day[(w + 28)].Day
+
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+            var date = "";
+            $(".dayclick").click(function () {
+              date=  $(this).data("day") + "-" + $(this).data("month") + "-" + $(this).data("year");
+                $("#attendanceModal").find(".currentDate").text("Date :"+date);
+                $("#attendanceModal").modal("show");
+                
+            });
+
+
+            $(".attendancecheck").click(function () {
+                var attendance = $(this).is(':checked');
+
+                if (attendance == true) {
+                    $(this).parent().siblings(".saveattendance").removeClass("d-none");
+                }else
+                    $(this).parent().siblings(".saveattendance").addClass("d-none");
+            });
+
+
+            $(".saveattendance").click(function () {
+
+                var url = "@Url.Action("DateClick","Home")";
+                var attendance = $(this).siblings('.form-check').children(".attendancecheck").is(':checked');
+                var time = $(this).data("time");
+                var obj = { date: date, attendance: attendance, time: time };
+
+                $.ajax({
+                    method: "post",
+                    url: url,
+                    dataType: 'json',
+                    data: obj ,
+                    success: function (data) {
+
+                    }
+                });
+            });
+        });
+    </script>
+}
