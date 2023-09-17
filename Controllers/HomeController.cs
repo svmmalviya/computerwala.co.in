@@ -1,4 +1,5 @@
 ﻿using computerwala.Models;
+using DBService.APIModels;
 using DBService.Interfaces;
 using DBService.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -23,14 +24,16 @@ namespace computerwala.Controllers
         private IAuthentication _authentication;
 		private readonly ICWSubscription cWSubscription;
 		private readonly ICWCalender cWCalender;
-		public HomeController(ILogger<HomeController> logger, IMemoryCache cache,IAuthentication authentication,ICWSubscription cWSubscription,
-            ICWCalender calender)
+        private readonly ICWEvent cWEvent;
+        public HomeController(ILogger<HomeController> logger, IMemoryCache cache,IAuthentication authentication,ICWSubscription cWSubscription,
+            ICWCalender calender,ICWEvent cWEvent)
         {
             _logger = logger;
             _cache = cache;
             _authentication = authentication;
             this.cWSubscription = cWSubscription;
             this.cWCalender = calender;
+            this.cWEvent= cWEvent;
         }
 
         [HttpGet]
@@ -81,6 +84,26 @@ namespace computerwala.Controllers
 
             return View("Privacy",calender);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DateClick(AttendanceTime attendanceTime)
+        {
+
+            CWAttendance cWAttendance = new CWAttendance {
+                Active = false,
+                AttendanceDate=DateTime.Now.Date,
+                AttendanceTime=attendanceTime.time,
+                CreatedOn= DateTime.Now.Date,
+                HasAttended=true
+            
+            };
+            var response = await cWEvent.SaveEvent(cWAttendance);
+
+            var calender = JsonConvert.DeserializeObject<ApiResponse>(response.Data);
+
+            return Json("test");
+        }
+        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         [Route("Error")]

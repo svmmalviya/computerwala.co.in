@@ -114,6 +114,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<MaintenanceController>();
 builder.Services.AddTransient<IAuthentication, Authentication>();
+builder.Services.AddTransient<ICWEvent, CWEvent>();
 builder.Services.AddTransient<ICWCalender,CWCalender>();
 builder.Services.AddTransient<ICWSubscription, CWSubscription>();
 builder.Services.AddTransient<MaintenanceMW>();
