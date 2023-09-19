@@ -22,18 +22,18 @@ namespace computerwala.Controllers
         private readonly ILogger<HomeController> _logger;
         private IMemoryCache _cache;
         private IAuthentication _authentication;
-		private readonly ICWSubscription cWSubscription;
-		private readonly ICWCalender cWCalender;
+        private readonly ICWSubscription cWSubscription;
+        private readonly ICWCalender cWCalender;
         private readonly ICWEvent cWEvent;
-        public HomeController(ILogger<HomeController> logger, IMemoryCache cache,IAuthentication authentication,ICWSubscription cWSubscription,
-            ICWCalender calender,ICWEvent cWEvent)
+        public HomeController(ILogger<HomeController> logger, IMemoryCache cache, IAuthentication authentication, ICWSubscription cWSubscription,
+            ICWCalender calender, ICWEvent cWEvent)
         {
             _logger = logger;
             _cache = cache;
             _authentication = authentication;
             this.cWSubscription = cWSubscription;
             this.cWCalender = calender;
-            this.cWEvent= cWEvent;
+            this.cWEvent = cWEvent;
         }
 
         [HttpGet]
@@ -55,22 +55,22 @@ namespace computerwala.Controllers
             return View();
         }
 
-		[AcceptVerbs("Get", "Post")]
-		[AllowAnonymous]
-		public async Task<IActionResult> IsEmailInUser(string email)
-		{
+        [AcceptVerbs("Get", "Post")]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsEmailInUser(string email)
+        {
             var user = await this.cWSubscription.EmailExists(email);
 
-			if (user.Success&&!JsonConvert.DeserializeObject<bool>(user.Data))
-			{
-				return Json(user.Message);
-			}
-			else
-			{
-				return Json(true);
-			}
-		}
-		public string GetCurrentUrl()
+            if (user.Success && !JsonConvert.DeserializeObject<bool>(user.Data))
+            {
+                return Json(user.Message);
+            }
+            else
+            {
+                return Json(true);
+            }
+        }
+        public string GetCurrentUrl()
         {
             var currentUrl = $"{this.Request.Scheme}://{this.Request.Host}";
             return currentUrl;
@@ -82,28 +82,58 @@ namespace computerwala.Controllers
 
             var calender = JsonConvert.DeserializeObject<CWCalender>(response.Data);
 
-            return View("Privacy",calender);
+            return View("Privacy", calender);
         }
 
         [HttpPost]
         public async Task<IActionResult> DateClick(AttendanceTime attendanceTime)
         {
 
-            CWAttendance cWAttendance = new CWAttendance {
+            CWAttendance cWAttendance = new CWAttendance
+            {
                 Active = false,
-                AttendanceDate=DateTime.Now.Date,
-                AttendanceTime=attendanceTime.time,
-                CreatedOn= DateTime.Now.Date,
-                HasAttended=true
-            
+                AttendanceDate = Convert.ToDateTime(attendanceTime.date),
+                AttendanceTime = attendanceTime.time,
+                CreatedOn = DateTime.Now.Date,
+                HasAttended = true
+
             };
             var response = await cWEvent.SaveEvent(cWAttendance);
 
             var calender = JsonConvert.DeserializeObject<ApiResponse>(response.Data);
 
-            return Json("test");
+            return Json(calender);
         }
-        
+
+        [HttpPost]
+        public async Task<IActionResult> EventExists(AttendanceTime attendanceTime)
+        {
+            var calender = new List<CWAttendance>();
+            try
+            {
+
+
+                CWAttendance cWAttendance = new CWAttendance
+                {
+                    Active = false,
+                    AttendanceDate = Convert.ToDateTime(attendanceTime.date).Date,
+                    AttendanceTime = attendanceTime.time,
+                    CreatedOn = DateTime.Now.Date,
+                    HasAttended = true
+
+                };
+                var response = await cWEvent.EventExists(cWAttendance);
+
+                calender = JsonConvert.DeserializeObject<List<CWAttendance>>(response.Data);
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            return Json(calender);
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         [Route("Error")]
