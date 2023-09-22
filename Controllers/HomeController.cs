@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
@@ -54,6 +55,19 @@ namespace computerwala.Controllers
 
             return View();
         }
+
+        #region Localization
+        [HttpGet]
+        public IActionResult ChangeLanguage(string culture)
+        {
+            Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions() { Expires = DateTimeOffset.UtcNow.AddYears(1) });
+            var previewsPage = Request.Headers["Referer"].ToString();
+
+            return Redirect(previewsPage);
+        }
+        #endregion
 
         [AcceptVerbs("Get", "Post")]
         [AllowAnonymous]

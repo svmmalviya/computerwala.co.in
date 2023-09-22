@@ -8,8 +8,11 @@ using DBService.Interfaces;
 using DBService.AppContext;
 using computerwala.Controllers;
 using Microsoft.EntityFrameworkCore;
-
-
+using System.Reflection;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
+using computerwala.LanguageServices;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -17,13 +20,33 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddMemoryCache();
 builder.Services.AddSerilog();
 builder.Services.AddSession();
+builder.Services.AddLocalization(option =>
+{
+	option.ResourcesPath = "ApplicationResources";
+});
 builder.Services.AddMvc(o =>
 {
 	o.EnableEndpointRouting = false;
-
+}).AddViewLocalization().AddDataAnnotationsLocalization(options =>
+{
+	options.DataAnnotationLocalizerProvider = (type, factory) =>
+	{
+        var assemblyName = new AssemblyName(typeof(SharedResource).GetTypeInfo().Assembly.FullName);
+        return factory.Create("Resource", assemblyName.Name);
+    };
 });
 
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+	var resourceList = new List<CultureInfo> {
+		new CultureInfo("hi-IN"),
+		new CultureInfo("en-US") };
 
+	options.DefaultRequestCulture = new RequestCulture("en-US", "en-US");
+	options.SupportedCultures = resourceList;
+	options.SupportedUICultures = resourceList;
+	options.RequestCultureProviders.Insert(0, new QueryStringRequestCultureProvider());
+});
 
 builder.Services.AddDbContext<AppDBContext>(o =>
 {
@@ -111,13 +134,14 @@ builder.Services.AddCors((options) =>
 
 builder.Services.AddHttpContextAccessor();
 #region DIs
-builder.Services.AddSingleton<DapperContext>();
-builder.Services.AddScoped<MaintenanceController>();
-builder.Services.AddTransient<IAuthentication, Authentication>();
-builder.Services.AddTransient<ICWEvent, CWEvent>();
-builder.Services.AddTransient<ICWCalender,CWCalender>();
-builder.Services.AddTransient<ICWSubscription, CWSubscription>();
-builder.Services.AddTransient<MaintenanceMW>();
+builder.Services.AddSingleton<LanguageService>().
+AddSingleton<DapperContext>()
+.AddScoped<MaintenanceController>()
+.AddTransient<IAuthentication, Authentication>()
+.AddTransient<ICWEvent, CWEvent>()
+.AddTransient<ICWCalender, CWCalender>()
+.AddTransient<ICWSubscription, CWSubscription>()
+.AddTransient<MaintenanceMW>();
 #endregion
 
 var app = builder.Build();
@@ -131,6 +155,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowSpecificOrigins");
+app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
 // Create a configuration object to read from appsettings.json
 var configuration = new ConfigurationBuilder()
