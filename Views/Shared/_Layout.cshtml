@@ -40,7 +40,7 @@
             height: 350px;
             min-width: 350px !important;
             max-width: 450px !important;
-            width: 375px !important;
+            width: 400px !important;
         }
 
     </style>
@@ -228,7 +228,7 @@
                                         <div class="form-check form-switch m-2">
                                             <input class="form-check-input attendancecheck" type="checkbox" role="switch" id="MorningCheck">
                                         </div>
-                                        <button type="button" class="btn d-none btn-sm saveattendance" data-time="morning">
+                                        <button type="button" class="btn d-none btn-sm saveattendance" id="saveMorningAttendance" data-time="morning">
                                             <i class="bi bi-floppy"></i>
                                         </button>
                                     </div>
@@ -239,7 +239,7 @@
                                         <div class="form-check form-switch m-2">
                                             <input class="form-check-input attendancecheck" type="checkbox" role="switch" id="EveningCheck">
                                         </div>
-                                        <button type="button" class=" btn btn-sm d-none saveattendance" data-time="evening">
+                                        <button type="button" class=" btn btn-sm d-none saveattendance" id="saveEveningAttendance" data-time="evening">
                                             <i class="bi bi-floppy"></i>
                                         </button>
                                     </div>
@@ -258,7 +258,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> 
 
 </body>
 </html>
