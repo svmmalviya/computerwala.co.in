@@ -7,10 +7,11 @@ using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Extensions.FileProviders;
 using System.Text;
 using System.IO;
+using computerwala.Base;
 
 namespace computerwala.Controllers
 {
-	public class MaintenanceController : Controller
+	public class MaintenanceController : BaseController
 	{
 		private readonly ICWSubscription cWSubscription;
 		private readonly IHttpContextAccessor _httpContextAccessor;

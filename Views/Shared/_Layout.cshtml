@@ -1,10 +1,14 @@
-﻿
+﻿@{
+    var culture = @Thread.CurrentThread.CurrentUICulture.Name == "en-US" ? "hi-IN" : "en-US";
+}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ComputerWala</title>
+    <title>@ViewData["Title"] - @_localizer.GetValue("CompanyTitle")</title>
 
     <meta content="Computerwala.co.in is a attendance management system and other utility" name="description">
     <meta content="computerwala computer_wala computer wala computerwala.co.in is a attendance management system and other utility" name="keywords">
@@ -27,6 +31,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.0/font/bootstrap-icons.min.css" integrity="sha512-rDTlSC+d3sQQeTwkSYI7grcqLTrDZjOEEddzt/7IRA+9Q7x1Zud4j++lH29VSlNrTI0RZ/9d45X6qrFK0RD94w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Template Main CSS File -->
     <link href="~/user-assets/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <style>
@@ -37,8 +42,8 @@
         }
 
         .calenderRow {
-            height: 350px;
-            min-width: 350px !important;
+            height: 400px;
+            min-width: 400px !important;
             max-width: 450px !important;
             width: 400px !important;
         }
@@ -48,18 +53,18 @@
 <body>
     <!-- ======= Header ======= -->
     <header id="header" class="fixed-top">
-        <div class="container d-flex align-items-center">
 
+        <div class="container d-flex align-items-center">
             <h1 class="logo me-auto"><a asp-action="Index" asp-controller="Home"><span>Computer</span>Wala</a></h1>
             <!-- Uncomment below if you prefer to use an image logo -->
             @* <a href="index.html" class="logo me-auto me-lg-0"><img src="~/user-assets/img/logo.png" alt="" class="img-fluid"></a> *@
 
             <nav id="navbar" class="navbar order-last order-lg-0">
                 <ul>
-                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="index.html" class="active">@_localizer.GetValue("Menu_Home")</a></li>
 
                     <li class="dropdown">
-                        <a asp-action="CWCalender" asp-controller="Home">Calender</a>
+                        <a asp-action="CWCalender" asp-controller="Home">@_localizer.GetValue("Menu_Calender")</a>
                         @*  <ul>
                         <li><a href="about.html">About Us</a></li>
                         <li><a href="team.html">Team</a></li>
@@ -77,11 +82,10 @@
                         </ul> *@
                     </li>
 
-                    <li><a href="services.html">Services</a></li>
-                    <li><a href="portfolio.html">Portfolio</a></li>
-                    <li><a href="pricing.html">Pricing</a></li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="services.html">@_localizer.GetValue("Menu_Services")</a></li>
+                    @* <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="blog.html">Blog</a></li> *@
+                    <li><a href="contact.html">@_localizer.GetValue("Menu_Contact")</a></li>
 
                 </ul>
                 <i class="bi bi-list mobile-nav-toggle"></i>
@@ -92,6 +96,7 @@
                 <a href="#" class="facebook"><i class="bu bi-facebook"></i></a>
                 <a href="#" class="instagram"><i class="bu bi-instagram"></i></a>
                 <a href="#" class="linkedin"><i class="bu bi-linkedin"></i></i></a>
+                <a asp-controller="Home" title="Change language" asp-action="ChangeLanguage" asp-route-culture="@culture" class=""><i class="bi bi-translate"></i></a>
             </div>
 
         </div>
@@ -166,11 +171,11 @@
                 </div>
             </div>
             <div class="social-links text-center text-md-right pt-3 pt-md-0">
+                
                 <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
                 <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
                 <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
                 <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
-                <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
             </div>
         </div>
     </footer><!-- End Footer -->
@@ -246,11 +251,13 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                             <p>clicked profile</p>
                             <p>clicked profile</p>
                             <p>clicked profile</p>
                         </div>
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -258,7 +265,7 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 
 </body>
 </html>

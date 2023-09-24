@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using computerwala.Base;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,7 +10,7 @@ namespace computerwala.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : BaseApiController
     {
         private ILogger<AuthenticationController> _logger { get; set; }
         public AuthenticationController(ILogger<AuthenticationController> logger)
