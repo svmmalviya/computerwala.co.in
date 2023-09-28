@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.151" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
@@ -21,6 +22,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.11" />
     <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="MySqlConnector" Version="2.3.0-beta.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
     <PackageReference Include="Serilog" Version="2.12.0" />
@@ -88,10 +90,6 @@
     <None Include="wwwroot\Maintenance_assets\vendor\select2\select2.js" />
     <None Include="wwwroot\Maintenance_assets\vendor\select2\select2.min.js" />
     <None Include="wwwroot\Maintenance_assets\vendor\tilt\tilt.jquery.min.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DBService\DBService.csproj" />
   </ItemGroup>
 
 </Project>
