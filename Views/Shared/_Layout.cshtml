@@ -1,5 +1,9 @@
-﻿@{
+﻿@inject HomeController _home;
+
+@{
     var culture = @Thread.CurrentThread.CurrentUICulture.Name == "en-US" ? "hi-IN" : "en-US";
+
+    _home.SaveVisitor();
 }
 
 

@@ -40,6 +40,12 @@ namespace computerwala.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> HappyBirthDayBabu()
+        {
+            return View();
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
 
@@ -57,6 +63,29 @@ namespace computerwala.Controllers
 
             return View();
         }
+
+
+        [HttpGet]
+        public void SaveVisitor()
+        {
+            var Ipaddress = GetClientIpAddress();
+            cWSubscription.SaveVisiter(Ipaddress);
+        }
+
+
+        [HttpGet]
+        public async Task<int> GetVisiter()
+        {
+            var count = 0;
+
+            var resp= await cWSubscription.GetVisiterCount();
+
+            count = JsonConvert.DeserializeObject<int>(resp.Data);
+
+            return count;
+        }
+        
+
 
         #region Localization
         [HttpGet]
@@ -125,7 +154,7 @@ namespace computerwala.Controllers
             var response = new ApiResponse();
             try
             {
-              response = await cWEvent.GetAttendanceDetails(calender.Year, calender.Month.Month);
+                response = await cWEvent.GetAttendanceDetails(calender.Year, calender.Month.Month);
 
                 if (response.Success)
                 {

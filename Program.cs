@@ -134,8 +134,9 @@ builder.Services.AddCors((options) =>
 
 builder.Services.AddHttpContextAccessor();
 #region DIs
-builder.Services.AddSingleton<LanguageService>().
-AddSingleton<DapperContext>()
+builder.Services.AddTransient<HomeController>()
+.AddSingleton<LanguageService>()
+.AddSingleton<DapperContext>()
 .AddScoped<MaintenanceController>()
 .AddTransient<IAuthentication, Authentication>()
 .AddTransient<ICWEvent, CWEvent>()
