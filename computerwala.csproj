@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CWConstants\**" />
+    <Content Remove="CWConstants\**" />
+    <EmbeddedResource Remove="CWConstants\**" />
+    <None Remove="CWConstants\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="Areas\Sophisticated\Views\Admin\_ViewStart.cshtml" />
     <Content Remove="Views\Shared\_LayoutAdmin.cshtml" />
   </ItemGroup>
@@ -35,7 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CWConstants\" />
     <Folder Include="wwwroot\user-asset\" />
   </ItemGroup>
 
