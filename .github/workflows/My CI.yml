@@ -38,8 +38,8 @@ jobs:
       with:
           image: svmmalviya/computerwala.co.in
           registry: docker.io
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKER_USERNAME}}
+          password: ${{ secrets.DOCKER_PASSWORD}}
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
