@@ -22,15 +22,15 @@ builder.Services.AddSerilog();
 builder.Services.AddSession();
 builder.Services.AddLocalization(option =>
 {
-	option.ResourcesPath = "ApplicationResources";
+    option.ResourcesPath = "ApplicationResources";
 });
 builder.Services.AddMvc(o =>
 {
-	o.EnableEndpointRouting = false;
+    o.EnableEndpointRouting = false;
 }).AddViewLocalization().AddDataAnnotationsLocalization(options =>
 {
-	options.DataAnnotationLocalizerProvider = (type, factory) =>
-	{
+    options.DataAnnotationLocalizerProvider = (type, factory) =>
+    {
         var assemblyName = new AssemblyName(typeof(SharedResource).GetTypeInfo().Assembly.FullName);
         return factory.Create("Resource", assemblyName.Name);
     };
@@ -38,32 +38,32 @@ builder.Services.AddMvc(o =>
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-	var resourceList = new List<CultureInfo> {
-		new CultureInfo("hi-IN"),
-		new CultureInfo("en-US") };
+    var resourceList = new List<CultureInfo> {
+        new CultureInfo("hi-IN"),
+        new CultureInfo("en-US") };
 
-	options.DefaultRequestCulture = new RequestCulture("en-US", "en-US");
-	options.SupportedCultures = resourceList;
-	options.SupportedUICultures = resourceList;
-	options.RequestCultureProviders.Insert(0, new QueryStringRequestCultureProvider());
+    options.DefaultRequestCulture = new RequestCulture("en-US", "en-US");
+    options.SupportedCultures = resourceList;
+    options.SupportedUICultures = resourceList;
+    options.RequestCultureProviders.Insert(0, new QueryStringRequestCultureProvider());
 });
 
 builder.Services.AddDbContext<AppDBContext>(o =>
 {
 
 
-	var connectionStr = "";
+    var connectionStr = "";
 
-	if (builder.Configuration["dbtype"].ToLower() == "mysql")
-	{
-		connectionStr = builder.Configuration.GetConnectionString("MySqlConnection");
-		o.UseMySQL(connectionStr);
-	}
-	else
-	{
-		connectionStr = builder.Configuration.GetConnectionString("SqlServerConnection");
-		o.UseSqlServer(connectionStr);
-	}
+    if (builder.Configuration["dbtype"].ToLower() == "mysql")
+    {
+        connectionStr = builder.Configuration.GetConnectionString("MySqlConnection");
+        o.UseMySQL(connectionStr);
+    }
+    else
+    {
+        connectionStr = builder.Configuration.GetConnectionString("SqlServerConnection");
+        o.UseSqlServer(connectionStr);
+    }
 
 });
 
@@ -72,24 +72,24 @@ builder.Services.AddDbContext<AppDBContext>(o =>
 builder.Services.AddAuthentication(options =>
 
 {
-	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
-	var httpAccessor = new HttpContextAccessor();
-	httpAccessor.HttpContext = new DefaultHttpContext();
-	var currentHttpContext = httpAccessor.HttpContext;
+    var httpAccessor = new HttpContextAccessor();
+    httpAccessor.HttpContext = new DefaultHttpContext();
+    var currentHttpContext = httpAccessor.HttpContext;
 
-	options.TokenValidationParameters = new TokenValidationParameters
-	{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
 
-		ValidateIssuer = true,
-		ValidateAudience = true,
-		ValidIssuer = $"{currentHttpContext.Request.Scheme}://{currentHttpContext.Request.Host}",
-		ValidAudience = $"{currentHttpContext.Request.Scheme}://{currentHttpContext.Request.Host}",
-		ClockSkew = TimeSpan.FromMinutes(60),
-		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("website_computerwala.co.in.indianWebsite"))
-	};
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidIssuer = $"{currentHttpContext.Request.Scheme}://{currentHttpContext.Request.Host}",
+        ValidAudience = $"{currentHttpContext.Request.Scheme}://{currentHttpContext.Request.Host}",
+        ClockSkew = TimeSpan.FromMinutes(60),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("website_computerwala.co.in.indianWebsite"))
+    };
 });
 
 //builder.Services.AddAuthentication(options =>
@@ -113,23 +113,23 @@ builder.Services.AddAuthentication(options =>
 //});
 builder.Services.AddCors((options) =>
 {
-	options.AddPolicy("AllowSpecificOrigins",
-		builder =>
-		{
-			// Create a new HttpContextAccessor
-			var httpContextAccessor = new HttpContextAccessor();
+    options.AddPolicy("AllowSpecificOrigins",
+        builder =>
+        {
+            // Create a new HttpContextAccessor
+            var httpContextAccessor = new HttpContextAccessor();
 
-			// Set the HttpContextAccessor.HttpContext to the current HttpContext
-			// This line is essential for getting the current context
-			httpContextAccessor.HttpContext = new DefaultHttpContext();
+            // Set the HttpContextAccessor.HttpContext to the current HttpContext
+            // This line is essential for getting the current context
+            httpContextAccessor.HttpContext = new DefaultHttpContext();
 
-			// Now you can access the current HttpContext
-			HttpContext currentHttpContext = httpContextAccessor.HttpContext;
+            // Now you can access the current HttpContext
+            HttpContext currentHttpContext = httpContextAccessor.HttpContext;
 
-			builder.WithOrigins($"{currentHttpContext.Request.Scheme}://{currentHttpContext.Request.Host}")
-				   .WithHeaders("content-security-policy,cache-control")
-				   .WithMethods("get,post");
-		});
+            builder.WithOrigins($"{currentHttpContext.Request.Scheme}://{currentHttpContext.Request.Host}")
+                   .WithHeaders("content-security-policy,cache-control")
+                   .WithMethods("get,post");
+        });
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -150,23 +150,23 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-	app.UseExceptionHandler("/Home/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
 app.UseCors("AllowSpecificOrigins");
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
 // Create a configuration object to read from appsettings.json
 var configuration = new ConfigurationBuilder()
-	.AddJsonFile("appsettings.json")
-	.Build();
+    .AddJsonFile("appsettings.json")
+    .Build();
 
 // Configure Serilog using the settings from appsettings.json
 Log.Logger = new LoggerConfiguration()
-	.ReadFrom.Configuration(configuration)
-	.CreateLogger();
+    .ReadFrom.Configuration(configuration)
+    .CreateLogger();
 
 Log.Information("Application started");
 app.UseHttpsRedirection();
@@ -180,8 +180,8 @@ app.UseSession();
 
 app.UseMvc(o =>
 {
-	o.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
-	o.MapRoute("admin", "Sophisticated/{controller=Admin}/{action=Index}/{id?}");
+    o.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+    o.MapRoute("admin", "Sophisticated/{controller=Admin}/{action=Index}/{id?}");
 });
 
 //app.UseMvc();
@@ -189,18 +189,18 @@ app.UseMvc(o =>
 
 app.Use(async (context, next) =>
 {
-	var maintenanceenabled = Convert.ToBoolean(app.Configuration["maintenance"]);
+    var maintenanceenabled = Convert.ToBoolean(app.Configuration["maintenance"]);
 
-	Log.Logger.Information("in maintenance enabled: " + maintenanceenabled);
-	if (maintenanceenabled == true)
-	{
-		Log.Logger.Information("redirecting to maintenance page");
-		context.Response.Redirect("/maintenance/index", true);
-		//context.request.path = "/maintenance/index";
-		return;
-	}
+    Log.Logger.Information("in maintenance enabled: " + maintenanceenabled);
+    if (maintenanceenabled == true)
+    {
+        Log.Logger.Information("redirecting to maintenance page");
+        context.Response.Redirect("/maintenance/index", true);
+        //context.request.path = "/maintenance/index";
+        return;
+    }
 
-	await next();
+    await next();
 });
 //app.UseMiddleware<MaintenanceMW>();
 

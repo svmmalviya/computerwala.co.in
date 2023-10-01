@@ -78,13 +78,13 @@ namespace computerwala.Controllers
         {
             var count = 0;
 
-            var resp= await cWSubscription.GetVisiterCount();
+            var resp = await cWSubscription.GetVisiterCount();
 
             count = JsonConvert.DeserializeObject<int>(resp.Data);
 
             return count;
         }
-        
+
 
 
         #region Localization
@@ -124,12 +124,18 @@ namespace computerwala.Controllers
         public async Task<IActionResult> CWCalender()
         {
             var response = await cWCalender.GetCurrentCalender();
-
-            var calender = JsonConvert.DeserializeObject<CWCurrentMonth>(response.Data);
-            response = await cWEvent.GetAttendanceDetails(calender.Year, calender.Month.Month);
-            var attendance = JsonConvert.DeserializeObject<List<CWAttendance>>(response.Data);
-
+            var attendance = new List<CWAttendance>();
             CurrentMonthAttendanceDetails currentMonth = new CurrentMonthAttendanceDetails();
+            var calender = new CWCurrentMonth();
+
+            if (response.Success)
+                calender = JsonConvert.DeserializeObject<CWCurrentMonth>(response.Data);
+
+            response = await cWEvent.GetAttendanceDetails(calender.Year, calender.Month.Month);
+
+            if (response.Success)
+                attendance = JsonConvert.DeserializeObject<List<CWAttendance>>(response.Data);
+
 
             foreach (var item in attendance)
             {
