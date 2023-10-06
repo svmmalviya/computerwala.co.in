@@ -303,8 +303,8 @@ namespace DBService.Repositories
 
                     if (count == null)
                     {
-                        query = "insert into cwattendance (Id,AttendanceDate,AttendanceTime,HasAttended,CreatedOn,Active) " +
-                            " values(@Id,@AttendanceDate,@AttendanceTime,@HasAttended,@CreatedOn,@Active)";
+                        query = "insert into cwattendance (Id,AttendanceDate,AttendanceTime,HasAttended,CreatedOn,Active,Type) " +
+                            " values(@Id,@AttendanceDate,@AttendanceTime,@HasAttended,@CreatedOn,@Active,@TType)";
 
                         parameters.Add("Id", Guid.NewGuid().ToString(), DbType.String);
                         parameters.Add("AttendanceDate", cWAttendance.AttendanceDate, DbType.DateTime);
@@ -312,6 +312,7 @@ namespace DBService.Repositories
                         parameters.Add("HasAttended", cWAttendance.HasAttended, DbType.Boolean);
                         parameters.Add("CreatedOn", DateTime.Now, DbType.DateTime);
                         parameters.Add("Active", cWAttendance.Active, DbType.Boolean);
+                        parameters.Add("TType", cWAttendance.Type, DbType.String);
 
 
                         var inserted = await connection.ExecuteAsync(query, parameters);

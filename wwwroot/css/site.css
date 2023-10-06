@@ -18,20 +18,17 @@ html {
 }*/
 
 
+
 @media only screen and (max-width: 600px) {
     .calenderRow {
-        height: 350px;
         min-width: 350px !important;
-        width: 350px !important;
     }
 }
 
 
 @media only screen and (max-width: 1200px) {
     .calenderRow {
-        height: 350px;
         min-width: 430px !important;
-        width: 450px !important;
     }
 }
 

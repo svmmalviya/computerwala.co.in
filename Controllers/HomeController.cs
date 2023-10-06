@@ -2,6 +2,7 @@
 using computerwala.Base;
 using computerwala.Models;
 using DBService.APIModels;
+using DBService.AppContext;
 using DBService.Interfaces;
 using DBService.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -28,8 +29,10 @@ namespace computerwala.Controllers
         private readonly ICWSubscription cWSubscription;
         private readonly ICWCalender cWCalender;
         private readonly ICWEvent cWEvent;
+        private readonly AppDBContext dBContext;
+
         public HomeController(ILogger<HomeController> logger, IMemoryCache cache, IAuthentication authentication, ICWSubscription cWSubscription,
-            ICWCalender calender, ICWEvent cWEvent)
+            ICWCalender calender, ICWEvent cWEvent,AppDBContext dBContext)
         {
             _logger = logger;
             _cache = cache;
@@ -37,6 +40,7 @@ namespace computerwala.Controllers
             this.cWSubscription = cWSubscription;
             this.cWCalender = calender;
             this.cWEvent = cWEvent;
+            dBContext = dBContext;
         }
 
         [HttpGet]
@@ -60,7 +64,6 @@ namespace computerwala.Controllers
 
             //var resp = client.Execute(restRequest);
             //var content = resp.Content;
-
             return View();
         }
 
@@ -240,7 +243,8 @@ namespace computerwala.Controllers
                 AttendanceDate = Convert.ToDateTime(attendanceTime.date),
                 AttendanceTime = attendanceTime.time,
                 CreatedOn = DateTime.Now.Date,
-                HasAttended = true
+                HasAttended = true,
+                Type=attendanceTime.type
 
             };
             var response = await cWEvent.SaveEvent(cWAttendance);
