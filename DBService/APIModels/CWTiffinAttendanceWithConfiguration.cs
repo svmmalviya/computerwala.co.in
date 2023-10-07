@@ -6,6 +6,6 @@ namespace computerwala.DBService.APIModels
     public class CWTiffinAttendanceWithConfiguration
     {
         public List<CWAttendance> Attendances { get; set; }
-        public CWTiffinsConfigurations Configuration { get; set; }
+        public CWTiffinsPreferences Configuration { get; set; }
     }
 }

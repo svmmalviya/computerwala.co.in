@@ -2,7 +2,7 @@
 
 namespace computerwala.DBService.Models
 {
-    public class CWTiffinsConfigurations
+    public class CWTiffinsPreferences
     {
         [Key]
         public string Id { get; set; }

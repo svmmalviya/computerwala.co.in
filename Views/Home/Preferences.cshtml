@@ -1,0 +1,42 @@
+﻿@model CWTiffinsPreferences;
+
+@{
+    ViewData["Title"] = "Meal Preferences";
+}
+
+<!-- Book Us Start -->
+<div class="container-fluid contact py-6 wow bounceInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <form asp-action="Preferences" method="post" asp-controller="Home">
+            <div class="row g-0">
+                <div class="col-12">
+                    <div class="border-bottom border-top border-primary bg-light py-5 px-4">
+                        <div class="text-center">
+                            @* <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Book Us</small> *@
+                            <h3 class="display-6 mb-5">Meal Preferences</h3>
+                        </div>
+                        <div class="row g-4 form">
+                            <div class="col-lg-6 col-md-6">
+                                <input type="hidden" asp-for="@Model.Id" />
+                                <input asp-for="@Model.HalfMealAmount" class="form-control border-primary p-2" placeholder="Half Meal Price In Rupees">
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <input asp-for="@Model.FullMealAmount" class="form-control border-primary p-2" placeholder="Full Meal Price In Rupees">
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <input type="date" class="form-control border-primary p-2" placeholder="Select Meal Start Date">
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <input type="date" class="form-control border-primary p-2" placeholder="Select Meal End Date">
+                            </div>
+                            <div class="col-12 text-center ">
+                                <button type="submit" class="btn btn-primary px-5 py-1 rounded-pill float-end">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Book Us End -->

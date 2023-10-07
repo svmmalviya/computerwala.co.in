@@ -1,4 +1,5 @@
 ﻿using Azure;
+using computerwala.DBService.Models;
 using Dapper;
 using DBService.APIModels;
 using DBService.AppContext;
@@ -17,6 +18,8 @@ namespace DBService.Interfaces
     public interface ICWEvent : ICWAttendanceDetails
     {
         public Task<ApiResponse> SaveEvent(CWAttendance cWAttendance);
+        public Task<ApiResponse> GetTiffinPreferences();
+        public Task<ApiResponse> SaveTiffinPreferences(CWTiffinsPreferences cWTiffinsPreferences);
         public Task<ApiResponse> EventExists(CWAttendance cWAttendance);
 
 
