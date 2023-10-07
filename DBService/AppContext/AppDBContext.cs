@@ -26,6 +26,29 @@ namespace DBService.AppContext
         public DbSet<CWDays> CWDays { get; set; }
         public DbSet<CWAttendance> CWAttendance { get; set; }
         public DbSet<CWTiffinsConfigurations> CWTiffinsConfiguration { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Seed();
+        }
+
     }
 
+    public static class ModalBuilderExtension
+    {
+        public static void Seed(this ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CWTiffinsConfigurations>().HasData(
+                   new CWTiffinsConfigurations
+                   {
+                       Id = Guid.NewGuid().ToString(),
+                       Active = true,
+                       CreatedOn = DateTime.Now,
+                       FullMealAmount = 70,
+                       HalfMealAmount=50,
+
+                   });
+        }
+    }
 }

@@ -157,6 +157,11 @@ namespace computerwala.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
+            migrationBuilder.InsertData(
+                table: "CWTiffinsConfiguration",
+                columns: new[] { "Id", "Active", "CreatedOn", "FullMealAmount", "HalfMealAmount", "ModifiedOn" },
+                values: new object[] { "a49eecd7-451e-4060-8d61-c14766a105d1", true, new DateTime(2023, 10, 7, 17, 7, 11, 166, DateTimeKind.Local).AddTicks(7825), 70.0, 50.0, null });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CWDays_CWMonthId",
                 table: "CWDays",

@@ -13,6 +13,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using computerwala.LanguageServices;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -185,6 +186,12 @@ app.UseMvc(o =>
 });
 
 //app.UseMvc();
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var db = scope.ServiceProvider.GetRequiredService<AppDBContext>();
+//    db.Database.Migrate();
+//}
 
 
 app.Use(async (context, next) =>

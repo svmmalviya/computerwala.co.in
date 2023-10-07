@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace computerwala.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20231007104650_initialmigration")]
+    [Migration("20231007113711_initialmigration")]
     partial class initialmigration
     {
         /// <inheritdoc />
@@ -225,6 +225,16 @@ namespace computerwala.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CWTiffinsConfiguration");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "a49eecd7-451e-4060-8d61-c14766a105d1",
+                            Active = true,
+                            CreatedOn = new DateTime(2023, 10, 7, 17, 7, 11, 166, DateTimeKind.Local).AddTicks(7825),
+                            FullMealAmount = 70.0,
+                            HalfMealAmount = 50.0
+                        });
                 });
 
             modelBuilder.Entity("DBService.Models.CWDays", b =>

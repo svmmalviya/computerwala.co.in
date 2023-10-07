@@ -365,7 +365,7 @@ namespace DBService.Repositories
 
                     var attendances = await connection.QueryAsync<CWAttendance>(query, parameters);
 
-                    query = "SELECT * FROM computerwala.cwtiffinsconfiguration limit 1";
+                    query = "select * from cwtiffinsconfiguration limit 1";
                     var configuration = await connection.QuerySingleOrDefaultAsync<CWTiffinsConfigurations>(query, parameters);
 
                     if (attendances.ToList().Count != 0)
