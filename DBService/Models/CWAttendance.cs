@@ -14,6 +14,7 @@ namespace DBService.Models
         public string Id { get; set; }
         public DateTime AttendanceDate { get; set; }
         public string AttendanceTime { get; set; }
+        public string Type { get; set; }
         public bool HasAttended { get; set; }
         [Column(TypeName = "TIMESTAMP")]
         public DateTime CreatedOn { get; set; }

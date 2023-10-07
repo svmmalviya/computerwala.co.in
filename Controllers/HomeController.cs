@@ -1,7 +1,9 @@
 ﻿using Azure;
 using computerwala.Base;
+using computerwala.DBService.APIModels;
 using computerwala.Models;
 using DBService.APIModels;
+using DBService.AppContext;
 using DBService.Interfaces;
 using DBService.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -28,8 +30,10 @@ namespace computerwala.Controllers
         private readonly ICWSubscription cWSubscription;
         private readonly ICWCalender cWCalender;
         private readonly ICWEvent cWEvent;
+        private readonly AppDBContext dBContext;
+
         public HomeController(ILogger<HomeController> logger, IMemoryCache cache, IAuthentication authentication, ICWSubscription cWSubscription,
-            ICWCalender calender, ICWEvent cWEvent)
+            ICWCalender calender, ICWEvent cWEvent, AppDBContext dBContext)
         {
             _logger = logger;
             _cache = cache;
@@ -37,6 +41,7 @@ namespace computerwala.Controllers
             this.cWSubscription = cWSubscription;
             this.cWCalender = calender;
             this.cWEvent = cWEvent;
+            dBContext = dBContext;
         }
 
         [HttpGet]
@@ -60,7 +65,6 @@ namespace computerwala.Controllers
 
             //var resp = client.Execute(restRequest);
             //var content = resp.Content;
-
             return View();
         }
 
@@ -115,43 +119,72 @@ namespace computerwala.Controllers
                 return Json(true);
             }
         }
+
+        [HttpGet]
+        public async Task<CWCurrentMonth> GetMonthMealDetails()
+        {
+            var response = await cWCalender.GetCurrentCalender();
+            var calender = new CWCurrentMonth();
+            CurrentMonthAttendanceDetails currentMonth = new CurrentMonthAttendanceDetails();
+
+            try
+            {
+
+                if (response.Success)
+                    calender = JsonConvert.DeserializeObject<CWCurrentMonth>(response.Data);
+
+                response = await cWEvent.GetAttendanceDetails(calender.Year, calender.Month.Month);
+
+                if (response.Success)
+                {
+                    var configurationwithattendance = JsonConvert.DeserializeObject<CWTiffinAttendanceWithConfiguration>(response.Data);
+                    foreach (var item in configurationwithattendance.Attendances)
+                    {
+                        if (item.AttendanceTime.ToLower() == "morning")
+                        {
+                            if (item.Type.ToLower() == "h")
+                                currentMonth.CurrentMonthMorningHalf++;
+                            if (item.Type.ToLower() == "f")
+                                currentMonth.CurrentMonthMorningFull++;
+                        }
+
+                        if (item.AttendanceTime.ToLower() == "evening")
+                        {
+                            if (item.Type.ToLower() == "h")
+                                currentMonth.CurrentMonthEveningHalf++;
+                            if (item.Type.ToLower() == "f")
+                                currentMonth.CurrentMonthEveningFull++;
+                        }
+
+                    }
+
+                    currentMonth.CurrentMonthAmt = (currentMonth.CurrentMonthMorningHalf * configurationwithattendance.Configuration.HalfMealAmount) +
+                        (currentMonth.CurrentMonthMorningFull * configurationwithattendance.Configuration.FullMealAmount) +
+                        (currentMonth.CurrentMonthEveningHalf * configurationwithattendance.Configuration.HalfMealAmount) +
+                        (currentMonth.CurrentMonthEveningFull * configurationwithattendance.Configuration.FullMealAmount);
+
+                }
+                calender.AttendanceDetails = currentMonth;
+
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            return calender;
+        }
+
         public string GetCurrentUrl()
         {
             var currentUrl = $"{this.Request.Scheme}://{this.Request.Host}";
             return currentUrl;
         }
 
+        [HttpGet]
         public async Task<IActionResult> CWCalender()
         {
-            var response = await cWCalender.GetCurrentCalender();
-            var attendance = new List<CWAttendance>();
-            CurrentMonthAttendanceDetails currentMonth = new CurrentMonthAttendanceDetails();
-            var calender = new CWCurrentMonth();
-
-            if (response.Success)
-                calender = JsonConvert.DeserializeObject<CWCurrentMonth>(response.Data);
-
-            response = await cWEvent.GetAttendanceDetails(calender.Year, calender.Month.Month);
-
-            if (response.Success)
-                attendance = JsonConvert.DeserializeObject<List<CWAttendance>>(response.Data);
-
-
-            foreach (var item in attendance)
-            {
-                if (item.AttendanceTime.ToLower() == "morning")
-                    currentMonth.CurrentMonthFirstCnt++;
-
-                if (item.AttendanceTime.ToLower() == "evening")
-                    currentMonth.CurrentMonthSecondCnt++;
-
-            }
-
-
-            currentMonth.CurrentMonthAmt = (currentMonth.CurrentMonthFirstCnt * 50) + (currentMonth.CurrentMonthFirstCnt * 70);
-
-            calender.AttendanceDetails = currentMonth;
-
+            var calender = await GetMonthMealDetails();
             return View("Privacy", calender);
         }
 
@@ -164,22 +197,35 @@ namespace computerwala.Controllers
 
                 if (response.Success)
                 {
-                    var attendance = JsonConvert.DeserializeObject<List<CWAttendance>>(response.Data);
+                    var configurationwithattendance = JsonConvert.DeserializeObject<CWTiffinAttendanceWithConfiguration>(response.Data);
 
                     CurrentMonthAttendanceDetails currentMonth = new CurrentMonthAttendanceDetails();
 
-                    foreach (var item in attendance)
+
+                    foreach (var item in configurationwithattendance.Attendances)
                     {
                         if (item.AttendanceTime.ToLower() == "morning")
-                            currentMonth.CurrentMonthFirstCnt++;
+                        {
+                            if (item.Type.ToLower() == "h")
+                                currentMonth.CurrentMonthMorningHalf++;
+                            if (item.Type.ToLower() == "f")
+                                currentMonth.CurrentMonthMorningFull++;
+                        }
 
                         if (item.AttendanceTime.ToLower() == "evening")
-                            currentMonth.CurrentMonthSecondCnt++;
+                        {
+                            if (item.Type.ToLower() == "h")
+                                currentMonth.CurrentMonthEveningHalf++;
+                            if (item.Type.ToLower() == "f")
+                                currentMonth.CurrentMonthEveningFull++;
+                        }
 
                     }
 
-
-                    currentMonth.CurrentMonthAmt = (currentMonth.CurrentMonthFirstCnt * 50) + (currentMonth.CurrentMonthSecondCnt * 70);
+                    currentMonth.CurrentMonthAmt = (currentMonth.CurrentMonthMorningHalf * configurationwithattendance.Configuration.HalfMealAmount) +
+                        (currentMonth.CurrentMonthMorningFull * configurationwithattendance.Configuration.FullMealAmount) +
+                        (currentMonth.CurrentMonthEveningHalf * configurationwithattendance.Configuration.HalfMealAmount) +
+                        (currentMonth.CurrentMonthEveningFull * configurationwithattendance.Configuration.FullMealAmount);
 
                     calender.AttendanceDetails = currentMonth;
                 }
@@ -237,17 +283,18 @@ namespace computerwala.Controllers
             CWAttendance cWAttendance = new CWAttendance
             {
                 Active = false,
-                AttendanceDate = Convert.ToDateTime(attendanceTime.date),
+                AttendanceDate = Convert.ToDateTime(Convert.ToDateTime(attendanceTime.date).ToString("yyyy-MM-dd")),
                 AttendanceTime = attendanceTime.time,
-                CreatedOn = DateTime.Now.Date,
-                HasAttended = true
+                CreatedOn = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")),
+                HasAttended = true,
+                Type = attendanceTime.type
 
             };
             var response = await cWEvent.SaveEvent(cWAttendance);
 
-            var calender = JsonConvert.DeserializeObject<ApiResponse>(response.Data);
+            var resp = JsonConvert.DeserializeObject<bool>(response.Data);
 
-            return Json(calender);
+            return Json(resp);
         }
 
         [HttpPost]

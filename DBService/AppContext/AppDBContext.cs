@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using computerwala.DBService.Models;
 using DBService.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,7 @@ namespace DBService.AppContext
         public DbSet<CWMonth> CWMonths { get; set; }
         public DbSet<CWDays> CWDays { get; set; }
         public DbSet<CWAttendance> CWAttendance { get; set; }
+        public DbSet<CWTiffinsConfigurations> CWTiffinsConfiguration { get; set; }
     }
 
 }

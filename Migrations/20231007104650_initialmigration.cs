@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace DBService.Migrations
+namespace computerwala.Migrations
 {
     /// <inheritdoc />
-    public partial class CWAttendance : Migration
+    public partial class initialmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,6 +21,7 @@ namespace DBService.Migrations
                     Id = table.Column<string>(type: "varchar(255)", nullable: false),
                     AttendanceDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     AttendanceTime = table.Column<string>(type: "longtext", nullable: false),
+                    Type = table.Column<string>(type: "longtext", nullable: false),
                     HasAttended = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
                     Active = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -58,6 +59,23 @@ namespace DBService.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CWSubscriptions", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "CWTiffinsConfiguration",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false),
+                    HalfMealAmount = table.Column<double>(type: "double", nullable: false),
+                    FullMealAmount = table.Column<double>(type: "double", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Active = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CWTiffinsConfiguration", x => x.Id);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -164,6 +182,9 @@ namespace DBService.Migrations
 
             migrationBuilder.DropTable(
                 name: "CWSubscriptions");
+
+            migrationBuilder.DropTable(
+                name: "CWTiffinsConfiguration");
 
             migrationBuilder.DropTable(
                 name: "CWVisiters");

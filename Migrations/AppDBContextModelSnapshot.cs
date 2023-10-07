@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DBService.Migrations
+namespace computerwala.Migrations
 {
     [DbContext(typeof(AppDBContext))]
     partial class AppDBContextModelSnapshot : ModelSnapshot
@@ -39,6 +39,10 @@ namespace DBService.Migrations
 
                     b.Property<bool>("HasAttended")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -193,6 +197,31 @@ namespace DBService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CWYears");
+                });
+
+            modelBuilder.Entity("computerwala.DBService.Models.CWTiffinsConfigurations", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<double>("FullMealAmount")
+                        .HasColumnType("double");
+
+                    b.Property<double>("HalfMealAmount")
+                        .HasColumnType("double");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CWTiffinsConfiguration");
                 });
 
             modelBuilder.Entity("DBService.Models.CWDays", b =>
