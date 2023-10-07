@@ -199,7 +199,7 @@ namespace computerwala.Migrations
                     b.ToTable("CWYears");
                 });
 
-            modelBuilder.Entity("computerwala.DBService.Models.CWTiffinsConfigurations", b =>
+            modelBuilder.Entity("computerwala.DBService.Models.CWTiffinsPreferences", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
@@ -221,17 +221,7 @@ namespace computerwala.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CWTiffinsConfiguration");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "a49eecd7-451e-4060-8d61-c14766a105d1",
-                            Active = true,
-                            CreatedOn = new DateTime(2023, 10, 7, 17, 7, 11, 166, DateTimeKind.Local).AddTicks(7825),
-                            FullMealAmount = 70.0,
-                            HalfMealAmount = 50.0
-                        });
+                    b.ToTable("CWTiffinPreferences");
                 });
 
             modelBuilder.Entity("DBService.Models.CWDays", b =>

@@ -25,12 +25,12 @@ namespace DBService.AppContext
         public DbSet<CWMonth> CWMonths { get; set; }
         public DbSet<CWDays> CWDays { get; set; }
         public DbSet<CWAttendance> CWAttendance { get; set; }
-        public DbSet<CWTiffinsConfigurations> CWTiffinsConfiguration { get; set; }
+        public DbSet<CWTiffinsPreferences> CWTiffinPreferences { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Seed();
+            //modelBuilder.Seed();
         }
 
     }
@@ -39,8 +39,8 @@ namespace DBService.AppContext
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CWTiffinsConfigurations>().HasData(
-                   new CWTiffinsConfigurations
+            modelBuilder.Entity<CWTiffinsPreferences>().HasData(
+                   new CWTiffinsPreferences
                    {
                        Id = Guid.NewGuid().ToString(),
                        Active = true,

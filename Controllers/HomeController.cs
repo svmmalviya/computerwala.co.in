@@ -1,6 +1,7 @@
 ﻿using Azure;
 using computerwala.Base;
 using computerwala.DBService.APIModels;
+using computerwala.DBService.Models;
 using computerwala.Models;
 using DBService.APIModels;
 using DBService.AppContext;
@@ -31,6 +32,7 @@ namespace computerwala.Controllers
         private readonly ICWCalender cWCalender;
         private readonly ICWEvent cWEvent;
         private readonly AppDBContext dBContext;
+        private static string Message = "";
 
         public HomeController(ILogger<HomeController> logger, IMemoryCache cache, IAuthentication authentication, ICWSubscription cWSubscription,
             ICWCalender calender, ICWEvent cWEvent, AppDBContext dBContext)
@@ -48,6 +50,35 @@ namespace computerwala.Controllers
         public async Task<IActionResult> HappyBirthDayBabu()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Preferences()
+        {
+            var preference = new CWTiffinsPreferences();
+            var response = await cWEvent.GetTiffinPreferences();
+            ViewBag.message = Message;
+
+            if (response.Success)
+            {
+                preference = JsonConvert.DeserializeObject<CWTiffinsPreferences>(response.Data);
+            }
+
+            Message = string.Empty;
+            return View(preference);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Preferences(CWTiffinsPreferences preferences)
+        {
+            var response = await cWEvent.SaveTiffinPreferences(preferences);
+            if (response.Success)
+            {
+                var updatedOrSave = JsonConvert.DeserializeObject<bool>(response.Data);
+                Message = updatedOrSave == true ? "Preferences Updated Succesfully." : "Failed To Update Preferences.";
+            }
+            return RedirectToAction("Preferences");
         }
 
         [HttpGet]
