@@ -3,19 +3,16 @@ using System;
 using DBService.AppContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DBService.Migrations
+namespace computerwala.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20231006215353_addedtiffintype")]
-    partial class addedtiffintype
+    partial class AppDBContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -200,6 +197,31 @@ namespace DBService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CWYears");
+                });
+
+            modelBuilder.Entity("computerwala.DBService.Models.CWTiffinsConfigurations", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<double>("FullMealAmount")
+                        .HasColumnType("double");
+
+                    b.Property<double>("HalfMealAmount")
+                        .HasColumnType("double");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CWTiffinsConfiguration");
                 });
 
             modelBuilder.Entity("DBService.Models.CWDays", b =>

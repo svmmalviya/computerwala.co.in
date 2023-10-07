@@ -89,6 +89,9 @@
                             </div>
                         </div>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
+                        <a asp-action="ChangeLanguage" asp-controller="Home" asp-route-culture="@culture" >
+                            <i class="bi bi-translate"></i>
+                        </a>
                     </div>
                     <button class="btn-search btn btn-primary btn-md-square me-4 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search"></i></button>
                     <a href="" class="btn btn-primary py-2 px-4 d-none d-xl-inline-block rounded-pill">Book Now</a>
@@ -165,22 +168,22 @@
                         <h4 class="mb-4">Social Gallery</h4>
                         <div class="row g-2">
                             <div class="col-4">
-                                <img src="img/menu-01.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
+                                <img src="~/user-assers/img/menu-01.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
                             </div>
                             <div class="col-4">
-                                <img src="img/menu-02.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
+                                <img src="~/user-assers/img/menu-02.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
                             </div>
                             <div class="col-4">
-                                <img src="img/menu-03.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
+                                <img src="~/user-assers/img/menu-03.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
                             </div>
                             <div class="col-4">
-                                <img src="img/menu-04.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
+                                <img src="~/user-assers/img/menu-04.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
                             </div>
                             <div class="col-4">
-                                <img src="img/menu-05.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
+                                <img src="~/user-assers/img/menu-05.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
                             </div>
                             <div class="col-4">
-                                <img src="img/menu-06.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
+                                <img src="~/user-assers/img/menu-06.jpg" class="img-fluid rounded-circle border border-primary p-2" alt="">
                             </div>
                         </div>
                     </div>
@@ -284,20 +287,20 @@
                                 <div class="col-6 p-3">
                                     <div class="row">
                                         <div class="col-md-4 col-sm-12 d-flex">
-                                            <label class="form-check-label fs-6 m-1" for="MorningCheck">Dinner</label>
+                                            <label class="form-check-label fs-6 m-1" for="EveningCheck">Dinner</label>
                                             <div class="form-check form-switch m-1">
                                                 <input class="form-check-input attendancecheck" type="checkbox" role="switch" id="EveningCheck">
                                             </div>
                                         </div>
                                         <div class="col-md-4 col-sm-6 d-flex d-none saveattendance">
                                             <div class="form-check m-1">
-                                                <input class="form-check-input " type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                                <input class="form-check-input " type="radio" name="dinner" value="h" id="flexRadioDefault1">
                                                 <label class="form-check-label" for="flexRadioDefault1">
                                                     Half
                                                 </label>
                                             </div>
                                             <div class="form-check m-1">
-                                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                                                <input class="form-check-input" type="radio" name="dinner" value="f" id="flexRadioDefault2" checked>
                                                 <label class="form-check-label" for="flexRadioDefault2">
                                                     Full
                                                 </label>
@@ -328,5 +331,6 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

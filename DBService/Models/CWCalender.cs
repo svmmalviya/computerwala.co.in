@@ -47,14 +47,18 @@ namespace DBService.Models
     {
         public CurrentMonthAttendanceDetails()
         {
-            this.CurrentMonthFirstCnt = 0;
-            this.CurrentMonthSecondCnt = 0;
+            this.CurrentMonthMorningHalf = 0;
+            this.CurrentMonthEveningHalf= 0;
+            this.CurrentMonthEveningFull= 0;
+            this.CurrentMonthMorningFull= 0;
             this.CurrentMonthAmt = 0;
             this.CurrentMonthAdvanceAmt= 0;
         }
-        public int CurrentMonthFirstCnt { get; set; }
+        public int CurrentMonthMorningHalf { get; set; }
+        public int CurrentMonthMorningFull { get; set; }
+        public int CurrentMonthEveningHalf { get; set; }
+        public int CurrentMonthEveningFull { get; set; }
         public int CurrentMonthAdvanceAmt { get; set; }
-        public int CurrentMonthSecondCnt { get; set; }
         public double CurrentMonthAmt { get; set; }
     }
 

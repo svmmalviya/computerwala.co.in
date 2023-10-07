@@ -1,9 +1,10 @@
-﻿using Dapper;
+﻿using computerwala.DBService.APIModels;
+using computerwala.DBService.Models;
+using Dapper;
 using DBService.APIModels;
 using DBService.AppContext;
 using DBService.CWConstants;
 using DBService.Interfaces;
-using DBService.Migrations;
 using DBService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -323,7 +324,8 @@ namespace DBService.Repositories
                             response.Data = JsonConvert.SerializeObject(true);
                             response.Message = Messages.AttendanceSaved;
                         }
-                        else {
+                        else
+                        {
                             response.Success = false;
                             response.Data = JsonConvert.SerializeObject(false);
                             response.Message = Messages.AttendanceSavingFailed;
@@ -354,18 +356,28 @@ namespace DBService.Repositories
                 var currentDatte = DateTime.Now;
                 using (var connection = _dapperContext.CreateConnection())
                 {
-                    var query = "select * from cwattendance where AttendanceDate between @FromDate and @ToDate and (AttendanceTime=@morningTime or AttendanceTime=@eveningTime)";
+                    var query = "select * from cwattendance where AttendanceDate between @FromDate and @ToDate " +
+                        "and (AttendanceTime=@morningTime or AttendanceTime=@eveningTime)";
                     parameters.Add("FromDate", new DateTime(year, month, 1).ToString("yyyy-MM-dd"), DbType.String);
                     parameters.Add("ToDate", new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("yyyy-MM-dd"), DbType.String);
                     parameters.Add("morningTime", "morning", DbType.String);
                     parameters.Add("eveningTime", "evening", DbType.String);
 
-                    var count = await connection.QueryAsync<CWAttendance>(query, parameters);
+                    var attendances = await connection.QueryAsync<CWAttendance>(query, parameters);
 
-                    if (count.ToList().Count !=0)
+                    query = "SELECT * FROM computerwala.cwtiffinsconfiguration limit 1";
+                    var configuration = await connection.QuerySingleOrDefaultAsync<CWTiffinsConfigurations>(query, parameters);
+
+                    if (attendances.ToList().Count != 0)
                     {
+                        CWTiffinAttendanceWithConfiguration wTiffinAttendanceWithConfiguration = new CWTiffinAttendanceWithConfiguration
+                        {
+                            Attendances = attendances.ToList(),
+                            Configuration = configuration,
+                        };
+
                         response.Success = true;
-                        response.Data = JsonConvert.SerializeObject(count.ToList());
+                        response.Data = JsonConvert.SerializeObject(wTiffinAttendanceWithConfiguration);
                         response.Message = Messages.SuccesfullySubscribed;
                     }
                 }
