@@ -1,4 +1,4 @@
-﻿@using System.Globalization;
+﻿
 @model CWCurrentMonth
 
 @{
@@ -20,7 +20,7 @@
                     return elementName.Equals(targetName, StringComparison.OrdinalIgnoreCase);
                 });
 
-                var todayDatetime = DateTime.Now;
+                var todayDatetime = _ISTDatetime.istDatetime;
 
                 var tocontinue = false;
                 var myindex = 0;
@@ -94,8 +94,7 @@
                                         myindex++;
                                         isCurrentDateClass = "";
                                     }
-                                    else
-                                            if (tocontinue)
+                                    else if (tocontinue)
                                     {
                                         isCurrentDateClass = @Model.Month.Day[(w - skipDays)].Day == todayDatetime.Date.Day && @Model.Month.Month == todayDatetime.Date.Month && Model.Year == todayDatetime.Date.Year ? "text-info" : "";
 

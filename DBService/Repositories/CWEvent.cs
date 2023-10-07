@@ -1,5 +1,6 @@
 ﻿using computerwala.DBService.APIModels;
 using computerwala.DBService.Models;
+using computerwala.Utility;
 using Dapper;
 using DBService.APIModels;
 using DBService.AppContext;
@@ -19,15 +20,17 @@ namespace DBService.Repositories
     {
         private ApiResponse response;
         private readonly AppDBContext dbContext;
+        private ISTDatetime _iSTDatetime;
         private ILogger<CWSubscription> _logger { get; set; }
         private DapperContext _dapperContext { get; set; }
 
-        public CWEvent(ILogger<CWSubscription> logger, AppDBContext dBContext, DapperContext dapper)
+        public CWEvent(ILogger<CWSubscription> logger, AppDBContext dBContext, DapperContext dapper,ISTDatetime iSTDatetime)
         {
             this.response = new ApiResponse();
             this._logger = logger;
             this.dbContext = dBContext;
             this._dapperContext = dapper;
+            this._iSTDatetime = iSTDatetime;
         }
         public CWEvent()
         {
@@ -56,7 +59,7 @@ namespace DBService.Repositories
                         var parameters = new DynamicParameters();
                         parameters.Add("Id", Guid.NewGuid().ToString(), DbType.String);
                         parameters.Add("Email", subscription.Email, DbType.String);
-                        parameters.Add("CreatedOn", DateTime.Now, DbType.DateTime);
+                        parameters.Add("CreatedOn", _iSTDatetime.istDatetime, DbType.DateTime);
 
                         var companies = await connection.ExecuteAsync(query, parameters);
 
@@ -99,7 +102,7 @@ namespace DBService.Repositories
 
                         parameters.Add("Id", Guid.NewGuid().ToString(), DbType.String);
                         parameters.Add("IpAddress", ipaddress, DbType.String);
-                        parameters.Add("CreatedOn", DateTime.Now, DbType.DateTime);
+                        parameters.Add("CreatedOn", _iSTDatetime.istDatetime, DbType.DateTime);
 
 
                         var inserted = connection.QuerySingleOrDefault<int>(query, parameters);
@@ -218,7 +221,7 @@ namespace DBService.Repositories
                         parameters.Add("AttendanceDate", cWAttendance.AttendanceDate, DbType.DateTime);
                         parameters.Add("AttendanceTime", cWAttendance.AttendanceTime, DbType.String);
                         parameters.Add("HasAttended", cWAttendance.HasAttended, DbType.Boolean);
-                        parameters.Add("CreatedOn", DateTime.Now, DbType.DateTime);
+                        parameters.Add("CreatedOn", _iSTDatetime.istDatetime, DbType.DateTime);
                         parameters.Add("Active", cWAttendance.Active, DbType.Boolean);
 
 
@@ -311,7 +314,7 @@ namespace DBService.Repositories
                         parameters.Add("AttendanceDate", cWAttendance.AttendanceDate, DbType.DateTime);
                         parameters.Add("AttendanceTime", cWAttendance.AttendanceTime, DbType.String);
                         parameters.Add("HasAttended", cWAttendance.HasAttended, DbType.Boolean);
-                        parameters.Add("CreatedOn", DateTime.Now, DbType.DateTime);
+                        parameters.Add("CreatedOn", _iSTDatetime.istDatetime, DbType.DateTime);
                         parameters.Add("Active", cWAttendance.Active, DbType.Boolean);
                         parameters.Add("TType", cWAttendance.Type, DbType.String);
 
@@ -353,7 +356,7 @@ namespace DBService.Repositories
             try
             {
                 var parameters = new DynamicParameters();
-                var currentDatte = DateTime.Now;
+                var currentDatte = _iSTDatetime.istDatetime;
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     var query = "select * from cwattendance where AttendanceDate between @FromDate and @ToDate " +
@@ -365,8 +368,8 @@ namespace DBService.Repositories
 
                     var attendances = await connection.QueryAsync<CWAttendance>(query, parameters);
 
-                    query = "select * from cwtiffinsconfiguration limit 1";
-                    var configuration = await connection.QuerySingleOrDefaultAsync<CWTiffinsConfigurations>(query, parameters);
+                    query = "select * from cwtiffinpreferences limit 1";
+                    var configuration = await connection.QuerySingleOrDefaultAsync<CWTiffinsPreferences>(query, parameters);
 
                     if (attendances.ToList().Count != 0)
                     {
@@ -379,6 +382,123 @@ namespace DBService.Repositories
                         response.Success = true;
                         response.Data = JsonConvert.SerializeObject(wTiffinAttendanceWithConfiguration);
                         response.Message = Messages.SuccesfullySubscribed;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                response.Success = false;
+                response.Message = e.Message;
+                response.Data = null;
+            }
+
+            return response;
+        }
+
+        public async Task<ApiResponse> GetTiffinPreferences()
+        {
+            response = new ApiResponse();
+            try
+            {
+                var parameters = new DynamicParameters();
+                var currentDatte = _iSTDatetime.istDatetime;
+                using (var connection = _dapperContext.CreateConnection())
+                {
+                    var query = "select * from cwtiffinpreferences limit 1";
+                    var configuration = await connection.QuerySingleOrDefaultAsync<CWTiffinsPreferences>(query, parameters);
+
+                    if (configuration != null)
+                    {
+                        response.Success = true;
+                        response.Data = JsonConvert.SerializeObject(configuration);
+                        response.Message = Messages.SuccesfullySubscribed;
+                    }else 
+                    {
+                        response.Success = true;
+                        response.Data = JsonConvert.SerializeObject(new CWTiffinsPreferences());
+                        response.Message = "";
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                response.Success = false;
+                response.Message = e.Message;
+                response.Data = null;
+            }
+
+            return response;
+        }
+
+        public async Task<ApiResponse> SaveTiffinPreferences(CWTiffinsPreferences cWTiffinsPreferences)
+        {
+            response = new ApiResponse();
+            try
+            {
+                var parameters = new DynamicParameters();
+                var currentDatte = _iSTDatetime.istDatetime;
+                using (var connection = _dapperContext.CreateConnection())
+                {
+                    var query = "select * from cwtiffinpreferences where id=@id";
+
+                    if (cWTiffinsPreferences.Id != null && cWTiffinsPreferences.Id != string.Empty)
+                    {
+                        query = "update cwtiffinpreferences set HalfMealAmount=@HM, FullMealAmount=@FM,CreatedOn=@CreatedOn," +
+                            "ModifiedOn=@ModifiedOn, Active=@Active where Id=@id";
+
+                        parameters.Add("Id", cWTiffinsPreferences.Id, DbType.String);
+                        parameters.Add("HM", cWTiffinsPreferences.HalfMealAmount, DbType.Double);
+                        parameters.Add("FM", cWTiffinsPreferences.FullMealAmount, DbType.Double);
+                        parameters.Add("CreatedOn", cWTiffinsPreferences.CreatedOn, DbType.DateTime);
+                        parameters.Add("ModifiedOn", _iSTDatetime.istDatetime.ToString("yyyy-MM-dd"), DbType.DateTime);
+                        parameters.Add("Active", cWTiffinsPreferences.Active, DbType.Boolean);
+
+                        var inserted = await connection.ExecuteAsync(query, parameters);
+
+                        if (inserted == 1)
+                        {
+                            response.Success = true;
+                            response.Data = JsonConvert.SerializeObject(true);
+                            response.Message = Messages.AttendanceSaved;
+                        }
+                        else
+                        {
+                            response.Success = false;
+                            response.Data = JsonConvert.SerializeObject(false);
+                            response.Message = Messages.AttendanceSavingFailed;
+                        }
+
+                    }
+                    if (cWTiffinsPreferences.Id == null)
+                    {
+
+                        query = "insert into cwtiffinpreferences (Id,HalfMealAmount,FullMealAmount,CreatedOn,ModifiedOn,Active) " +
+                            " values(@Id,@HM,@FM,@CreatedOn,@ModifiedOn,@Active)";
+
+                        parameters.Add("Id", Guid.NewGuid().ToString(), DbType.String);
+                        parameters.Add("HM", cWTiffinsPreferences.HalfMealAmount, DbType.Double);
+                        parameters.Add("FM", cWTiffinsPreferences.FullMealAmount, DbType.Double);
+                        parameters.Add("CreatedOn", _iSTDatetime.istDatetime.ToString("yyyy-MM-dd"), DbType.DateTime);
+                        parameters.Add("ModifiedOn", null, DbType.DateTime);
+                        parameters.Add("Active", cWTiffinsPreferences.Active, DbType.Boolean);
+
+
+                        var inserted = await connection.ExecuteAsync(query, parameters);
+
+                        if (inserted == 1)
+                        {
+                            response.Success = true;
+                            response.Data = JsonConvert.SerializeObject(true);
+                            response.Message = Messages.AttendanceSaved;
+                        }
+                        else
+                        {
+                            response.Success = false;
+                            response.Data = JsonConvert.SerializeObject(false);
+                            response.Message = Messages.AttendanceSavingFailed;
+                        }
                     }
                 }
             }

@@ -61,9 +61,9 @@
     </div>
     <!-- Spinner End -->
     <!-- Navbar start -->
-    <div class="container-fluid nav-bar">
+    <div class="container-fluid nav-bar ">
         <div class="container">
-            <nav class="navbar navbar-light navbar-expand-lg py-4">
+            <nav class="navbar navbar-light navbar-expand-lg py-1">
                 <a asp-action="CWCalender" asp-controller="Home" class="navbar-brand">
                     <h1 class="text-primary fw-bold mb-0">Computer<span class="text-dark">Wala</span> </h1>
                 </a>
@@ -88,12 +88,23 @@
                             </div>
                         </div>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
-                        <a asp-action="ChangeLanguage" asp-controller="Home" asp-route-culture="@culture" >
-                            <i class="bi bi-translate"></i>
-                        </a>
+                        
                     </div>
-                    <button class="btn-search btn btn-primary btn-md-square me-4 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search"></i></button>
-                    <a href="" class="btn btn-primary py-2 px-4 d-none d-xl-inline-block rounded-pill">Book Now</a>
+                    <button class="btn-search btn btn-primary btn-md-square m-3 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search"></i></button>
+                    <a asp-action="ChangeLanguage" class="btn btn-primary btn-md-square m-3 rounded-circle d-lg-inline-flex" asp-controller="Home" asp-route-culture="@culture">
+                        <i class="bi bi-translate"></i>
+                    </a>
+                    @* <a href="" class="btn btn-primary py-2 px-4 d-none d-xl-inline-block rounded-pill">Book Now</a> *@
+                    <div class="dropdown">
+                        <button class="btn btn-primary btn-md-square m-3 rounded-circle d-lg-inline-flex" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-cog" aria-hidden="true"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <li><a class="dropdown-item" href="#"> <i class="fas fa-user-alt pe-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" asp-action="Preferences" asp-controller="Home" > <i class="fas fa-cog pe-2"></i>Preferences</a></li>
+                            <li><a class="dropdown-item" href="#"> <i class="fas fa-door-open pe-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
                 </div>
             </nav>
         </div>

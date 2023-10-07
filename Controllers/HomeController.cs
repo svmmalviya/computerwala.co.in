@@ -1,7 +1,9 @@
 ﻿using Azure;
 using computerwala.Base;
 using computerwala.DBService.APIModels;
+using computerwala.DBService.Models;
 using computerwala.Models;
+using computerwala.Utility;
 using DBService.APIModels;
 using DBService.AppContext;
 using DBService.Interfaces;
@@ -31,9 +33,12 @@ namespace computerwala.Controllers
         private readonly ICWCalender cWCalender;
         private readonly ICWEvent cWEvent;
         private readonly AppDBContext dBContext;
+        private static string Message = "";
+        private ISTDatetime _ISTDatetime;
+        
 
         public HomeController(ILogger<HomeController> logger, IMemoryCache cache, IAuthentication authentication, ICWSubscription cWSubscription,
-            ICWCalender calender, ICWEvent cWEvent, AppDBContext dBContext)
+            ICWCalender calender, ICWEvent cWEvent, AppDBContext dBContext, ISTDatetime iSTDatetime)
         {
             _logger = logger;
             _cache = cache;
@@ -42,12 +47,43 @@ namespace computerwala.Controllers
             this.cWCalender = calender;
             this.cWEvent = cWEvent;
             dBContext = dBContext;
+            _ISTDatetime = iSTDatetime;
+           
         }
 
         [HttpGet]
         public async Task<IActionResult> HappyBirthDayBabu()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Preferences()
+        {
+            var preference = new CWTiffinsPreferences();
+            var response = await cWEvent.GetTiffinPreferences();
+            ViewBag.message = Message;
+
+            if (response.Success)
+            {
+                preference = JsonConvert.DeserializeObject<CWTiffinsPreferences>(response.Data);
+            }
+
+            Message = string.Empty;
+            return View(preference);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Preferences(CWTiffinsPreferences preferences)
+        {
+            var response = await cWEvent.SaveTiffinPreferences(preferences);
+            if (response.Success)
+            {
+                var updatedOrSave = JsonConvert.DeserializeObject<bool>(response.Data);
+                Message = updatedOrSave == true ? "Preferences Updated Succesfully." : "Failed To Update Preferences.";
+            }
+            return RedirectToAction("Preferences");
         }
 
         [HttpGet]
@@ -280,12 +316,14 @@ namespace computerwala.Controllers
         public async Task<IActionResult> DateClick(AttendanceTime attendanceTime)
         {
 
+
+
             CWAttendance cWAttendance = new CWAttendance
             {
                 Active = false,
                 AttendanceDate = Convert.ToDateTime(Convert.ToDateTime(attendanceTime.date).ToString("yyyy-MM-dd")),
                 AttendanceTime = attendanceTime.time,
-                CreatedOn = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")),
+                CreatedOn = Convert.ToDateTime(_ISTDatetime.istDatetime.Date.ToString("yyyy-MM-dd")),
                 HasAttended = true,
                 Type = attendanceTime.type
 
@@ -310,7 +348,7 @@ namespace computerwala.Controllers
                     Active = false,
                     AttendanceDate = Convert.ToDateTime(attendanceTime.date).Date,
                     AttendanceTime = attendanceTime.time,
-                    CreatedOn = DateTime.Now.Date,
+                    CreatedOn = _ISTDatetime.istDatetime.Date,
                     HasAttended = true
 
                 };

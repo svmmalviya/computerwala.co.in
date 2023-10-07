@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using computerwala.Utility;
+using Dapper;
 using DBService.APIModels;
 using DBService.AppContext;
 using DBService.CWConstants;
@@ -20,19 +21,20 @@ namespace DBService.Repositories
         private ILogger<CWSubscription> _logger { get; set; }
         private DapperContext _dapperContext { get; set; }
         List<String> weekdays = new List<String>();
+        private ISTDatetime _mISTDatetime;
 
-        public CWCalender(ILogger<CWSubscription> logger, AppDBContext dBContext, DapperContext dapper)
+        public CWCalender(ILogger<CWSubscription> logger, AppDBContext dBContext, DapperContext dapper, ISTDatetime iSTDatetime)
         {
             this.response = new ApiResponse();
             this._logger = logger;
             this.dbContext = dBContext;
             this._dapperContext = dapper;
-
+            this._mISTDatetime = iSTDatetime;
 
             CultureInfo Culture = CultureInfo.CurrentCulture;
 
             // Get the current date
-            DateTime currentDate = DateTime.Now;
+            DateTime currentDate = _mISTDatetime.istDatetime;
 
 
             var startInserting = false;
@@ -78,7 +80,7 @@ namespace DBService.Repositories
                         var parameters = new DynamicParameters();
                         parameters.Add("Id", Guid.NewGuid().ToString(), DbType.String);
                         parameters.Add("Email", subscription.Email, DbType.String);
-                        parameters.Add("CreatedOn", DateTime.Now, DbType.DateTime);
+                        parameters.Add("CreatedOn", _mISTDatetime.istDatetime, DbType.DateTime);
 
                         var companies = await connection.ExecuteAsync(query, parameters);
 
@@ -123,7 +125,7 @@ namespace DBService.Repositories
 
                         parameters.Add("Id", Guid.NewGuid().ToString(), DbType.String);
                         parameters.Add("IpAddress", ipaddress, DbType.String);
-                        parameters.Add("CreatedOn", DateTime.Now, DbType.DateTime);
+                        parameters.Add("CreatedOn", _mISTDatetime.istDatetime, DbType.DateTime);
 
 
                         var inserted = connection.QuerySingleOrDefault<int>(query, parameters);
@@ -169,7 +171,7 @@ namespace DBService.Repositories
 
                             parameters.Add("Id", Guid.NewGuid().ToString(), DbType.String);
                             parameters.Add("Year", item.Year, DbType.Int32);
-                            parameters.Add("CreatedOn", DateTime.Now, DbType.DateTime);
+                            parameters.Add("CreatedOn", _mISTDatetime.istDatetime, DbType.DateTime);
                             parameters.Add("Active", item.Active, DbType.Boolean);
                             parameters.Add("AttachmentId", Guid.NewGuid(), DbType.String);
 
@@ -202,7 +204,7 @@ namespace DBService.Repositories
 
                                     parameters.Add("Id", Guid.NewGuid().ToString(), DbType.String);
                                     parameters.Add("Month", month.Month, DbType.Int32);
-                                    parameters.Add("CreatedOn", DateTime.Now, DbType.DateTime);
+                                    parameters.Add("CreatedOn", _mISTDatetime.istDatetime, DbType.DateTime);
                                     parameters.Add("Active", item.Active, DbType.Boolean);
                                     parameters.Add("Name", month.Name, DbType.String);
                                     parameters.Add("AttachmentId", Guid.NewGuid(), DbType.String);
@@ -245,7 +247,7 @@ namespace DBService.Repositories
 
                                                 parameters.Add("Id", Guid.NewGuid().ToString(), DbType.String);
                                                 parameters.Add("Day", day.Day, DbType.Int32);
-                                                parameters.Add("CreatedOn", DateTime.Now, DbType.DateTime);
+                                                parameters.Add("CreatedOn", _mISTDatetime.istDatetime, DbType.DateTime);
                                                 parameters.Add("Active", item.Active, DbType.Boolean);
                                                 parameters.Add("AttachmentId", Guid.NewGuid(), DbType.String);
                                                 parameters.Add("MonthId", monthId.ToList()[0], DbType.String);
@@ -399,7 +401,7 @@ namespace DBService.Repositories
             try
             {
                 var cwCurrentMonth = new DBService.Models.CWCurrentMonth();
-                var currentDate = DateTime.Now;
+                var currentDate = _mISTDatetime.istDatetime;
 
                 var month = new CWMonth { Month = currentDate.Month, Name = currentDate.Date.ToString("MMMM") };
 

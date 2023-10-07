@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using computerwala.LanguageServices;
 using System;
+using computerwala.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -133,10 +134,12 @@ builder.Services.AddCors((options) =>
         });
 });
 
+
 builder.Services.AddHttpContextAccessor();
 #region DIs
 builder.Services.AddTransient<HomeController>()
 .AddSingleton<LanguageService>()
+.AddSingleton<ISTDatetime>()
 .AddSingleton<DapperContext>()
 .AddScoped<MaintenanceController>()
 .AddTransient<IAuthentication, Authentication>()

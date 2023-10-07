@@ -2,7 +2,11 @@
 @using DBService.Models
 @using computerwala.Models
 @using computerwala.Controllers;
-@using computerwala.LanguageServices
+@using computerwala.LanguageServices;
+@using computerwala.DBService.Models;
+@using System.Globalization;
+@using computerwala.Utility;
 @inject LanguageService _localizer
+@inject ISTDatetime _ISTDatetime
 @using Microsoft.AspNetCore.Mvc.RazorPages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
