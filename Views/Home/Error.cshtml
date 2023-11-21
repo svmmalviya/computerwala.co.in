@@ -1,0 +1,19 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+
+@section Styles{
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:700,900" rel="stylesheet">
+	<link href="~/css/site.css" />
+}
+	<div id="notfound">
+		<div class="notfound">
+			<div class="notfound-404">
+			<h1>@ViewBag.statuscode</h1>
+				<h2>Page not found</h2>
+			</div>
+			<a asp-action="Index" asp-controller="Home">Home</a>
+		</div>
+	</div>

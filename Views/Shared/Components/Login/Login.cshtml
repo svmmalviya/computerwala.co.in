@@ -1,0 +1,24 @@
+﻿@model ProfileView
+
+
+@* <img src="~/user-assets/img/giphy.gif" id="loaderimg" /> *@
+
+<div class="form-group mb-4">
+    <label class="form-label" asp-for="@Model.Username"></label>
+    <input asp-for="@Model.Username" class="form-control" />
+    <span class="text-danger" asp-asp-validation-for="@Model.Username"></span>
+</div>
+<div class="form-group mb-4">
+    <label class="form-label" asp-for="@Model.Password"></label>
+    <input asp-for="@Model.Password" class="form-control" />
+    <span class="text-danger" asp-asp-validation-for="@Model.Password"></span>
+</div>
+<div class="form-check mb-4">
+    <label class="form-check-label" asp-for="@Model.RememberMe"></label>
+    <input asp-for="@Model.RememberMe" class="form-check-input" />
+</div>
+<div class="form-group">
+
+    <button class="btn btn-sm btn-primary float-end">Login</button>
+
+</div>

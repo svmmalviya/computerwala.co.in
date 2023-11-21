@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "computerwala", "computerwala.csproj", "{0DE7E58E-C9BA-4555-956A-AA49AA553AFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Computerwala.Models", "..\Computerwala.Models\Computerwala.Models.csproj", "{764BB687-DD86-48C1-A992-69AFF826FCB0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0DE7E58E-C9BA-4555-956A-AA49AA553AFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DE7E58E-C9BA-4555-956A-AA49AA553AFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DE7E58E-C9BA-4555-956A-AA49AA553AFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DE7E58E-C9BA-4555-956A-AA49AA553AFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{764BB687-DD86-48C1-A992-69AFF826FCB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{764BB687-DD86-48C1-A992-69AFF826FCB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{764BB687-DD86-48C1-A992-69AFF826FCB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{764BB687-DD86-48C1-A992-69AFF826FCB0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {94F020D4-6824-48BE-AE7E-D7F2C0BAF941}
+	EndGlobalSection
+EndGlobal

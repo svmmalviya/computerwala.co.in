@@ -1,0 +1,386 @@
+﻿@using System.Globalization;
+@model CWCurrentMonth
+
+@{
+    ViewData["Title"] = "Privacy Policy";
+    var dayIndex = 0;
+    // var today = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString();
+}
+
+
+<a asp-action="CWCalender" asp-controller="Home" class="todayAncor m-auto w-100">Today</a>
+<div class="row">
+    <div class="pl-2 col-md-6 ">
+        <form asp-action="ChangeCalender" method="post" id="calenderForm">
+            @{
+                var skipDays = Array.FindIndex(Model.Month.Weekdays.ToArray(), ele =>
+                {
+                    string elementName = ele;
+                    string targetName = Model.Month.Day[0].Name.ToLower();
+                    return elementName.Equals(targetName, StringComparison.OrdinalIgnoreCase);
+                });
+
+                var todayDatetime = DateTime.Now;
+
+                var tocontinue = false;
+                var myindex = 0;
+                dayIndex = 0;
+                <div class="card bg-white calenderRow m-3 shadow p-3 w-100 m-auto mb-3" id="@(Model.CurrentDate.Year.ToString()+Model.Month.ToString())">
+                    <div class="card-title d-inline-block w-100 text-center">
+                        <button class="float-start btn btn-sm btn-outline-success" type="button" id="btnPreviousMonth"><i class="fa-solid fa-angle-left "></i></button>
+
+                        <span class="">
+                            <select id="CurrentMonth" class="border-0" name="CurrentMonth">
+                                @for (int i = 1; i <= DateTimeFormatInfo.CurrentInfo.MonthNames.Length - 1; i++)
+                                {
+                                    if (Model.Month.Month == i)
+                                    {
+                                        <option value="@i" selected>@DateTimeFormatInfo.CurrentInfo.GetMonthName(i)</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@i">@DateTimeFormatInfo.CurrentInfo.GetMonthName(i)</option>
+                                    }
+                                }
+                            </select>
+                        </span>
+
+                        <span class="">
+                            <select id="CurrentYear" class="border-0" name="Year">
+                                @for (int i = 0; i < 100; i++)
+                                {
+                                    var year = new DateTime(1992, 1, 1).AddYears(i).Year.ToString();
+
+                                    if (Model.CurrentDate.Year == new DateTime(1992, 1, 1).AddYears(i).Year)
+                                    {
+                                        <option value="@year" selected>
+                                            @year
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@year">
+                                            @year
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </span>
+
+                        <button class="float-end btn btn-sm btn-outline-success" type="button" id="btnNextMonth"><i class="fa-solid fa-angle-right "></i></button>
+                    </div>
+
+                    <table class="table table-responsive w-100">
+                        @for (int w = 0; w < Model.Month.Weekdays.Count; w++)
+                        {
+                            var leavediv = w == 0 || w == 6 ? "bg-danger text-white h4 " : " h5";
+
+                            <tr class="@leavediv mt-1">
+                                <td class=" text-nowrap">@Model.Month.Weekdays[w].Substring(0,3)</td>
+
+                                @{
+                                    var isCurrentDateClass = "";
+
+                                    if (Model.Month.Weekdays[w].ToLower() == Model.Month.Day[0].Name.ToLower().Trim())
+                                    {
+                                        isCurrentDateClass = @Model.Month.Day[(w - skipDays)].Day == todayDatetime.Date.Day && @Model.Month.Month == todayDatetime.Date.Month && Model.Year == todayDatetime.Date.Year ? "text-info" : "";
+
+                                        <td class="text-center text-nowrap @isCurrentDateClass" data-year="@Model.CurrentDate.Year" data-month="@Model.Month.Month"
+                                            data-day="@Model.Month.Day[(w-skipDays)].Day"
+                                            id="@(Model.Month.Day[(w-skipDays)].Day.ToString() +Model.Month.Month.ToString()+ Model.CurrentDate.Year.ToString())">
+                                            <span class="dayclick"> @Model.Month.Day[(w-skipDays)].Day</span>
+                                        </td>
+                                        tocontinue = true;
+                                        myindex++;
+                                        isCurrentDateClass = "";
+                                    }
+                                    else if (tocontinue)
+                                    {
+                                        isCurrentDateClass = @Model.Month.Day[(w - skipDays)].Day == todayDatetime.Date.Day && @Model.Month.Month == todayDatetime.Date.Month && Model.Year == todayDatetime.Date.Year ? "text-info" : "";
+
+                                        <td class="text-center   text-nowrap @isCurrentDateClass" data-year="@Model.CurrentDate.Year" data-month="@Model.Month.Month"
+                                            data-day="@Model.Month.Day[(w-skipDays)].Day"
+                                            id="@(Model.Month.Day[(w-skipDays)].Day.ToString() +Model.Month.Month.ToString()+ Model.CurrentDate.Year.ToString())">
+                                            <span class="dayclick">@Model.Month.Day[(w-skipDays)].Day</span>
+                                        </td>
+                                        myindex++;
+                                        isCurrentDateClass = "";
+                                    }
+                                    else
+                                    {
+                                        <td class="text-center  text-nowrap" data-year="@Model.CurrentDate.Year" data-month="@Model.Month.Month"
+                                            data-day="@Model.Month.Day[w].Day">
+                                        </td>
+                                    }
+
+                                    isCurrentDateClass = (Model.Month.Day[(7 - (skipDays) + w)].Day == todayDatetime.Date.Day && Model.Month.Month == todayDatetime.Date.Month && Model.Year == todayDatetime.Date.Year) ? "text-info"
+                                    : "";
+
+                                    <td class="text-center  text-nowrap @isCurrentDateClass" data-year="@Model.CurrentDate.Year" data-month="@Model.Month.Month"
+                                         data-day="@Model.Month.Day[(7-(skipDays)+w)].Day"
+                                         id="@(Model.Month.Day[(7-skipDays)+w].Day.ToString() +Model.Month.Month.ToString()+ Model.CurrentDate.Year.ToString())">
+                                        <span class="dayclick">@Model.Month.Day[(7-(skipDays)+w)].Day</span>
+                                    </td>
+
+                                    isCurrentDateClass = "";
+
+                                    isCurrentDateClass = (@Model.Month.Day[(14 - (skipDays) + w)].Day == todayDatetime.Date.Day && @Model.Month.Month == todayDatetime.Date.Month && Model.Year == todayDatetime.Date.Year) ? "text-info" : "";
+
+                                    <td class=" text-center  text-nowrap @isCurrentDateClass" data-year="@Model.CurrentDate.Year" data-month="@Model.Month.Month"
+                                        data-day="@Model.Month.Day[(14-(skipDays)+w)].Day"
+                                        id="@(Model.Month.Day[(14-skipDays)+w].Day.ToString() +Model.Month.Month.ToString()+ Model.CurrentDate.Year.ToString())">
+                                        <span class="dayclick">@Model.Month.Day[(14-(skipDays)+w)].Day</span>
+                                    </td>
+
+                                    isCurrentDateClass = string.Empty;
+
+                                    @if ((21 - skipDays) + w < Model.Month.Day.Count)
+                                    {
+                                        isCurrentDateClass = (@Model.Month.Day[(21 - (skipDays) + w)].Day == todayDatetime.Date.Day && @Model.Month.Month == todayDatetime.Date.Month && Model.Year == todayDatetime.Date.Year)
+                                        ? "text-info" : "";
+
+                                        <td class=" text-center text-nowrap @isCurrentDateClass" data-year="@Model.CurrentDate.Year" data-month="@Model.Month.Month"
+                                            data-day="@Model.Month.Day[(21-(skipDays)+w)].Day"
+                                            id="@(Model.Month.Day[(21-skipDays)+w].Day.ToString() +Model.Month.Month.ToString()+ Model.CurrentDate.Year.ToString())">
+                                            <span class="dayclick"> @Model.Month.Day[(21-(skipDays)+w)].Day</span>
+                                        </td>
+
+                                        isCurrentDateClass = "";
+                                    }
+                                    else
+                                    {
+                                        <td class=" text-center  text-nowrap ">
+                                        </td>
+                                    }
+
+                                    if ((28 - skipDays) + w < Model.Month.Day.Count)
+                                    {
+                                        isCurrentDateClass = (@Model.Month.Day[(28 - (skipDays) + w)].Day == todayDatetime.Date.Day && @Model.Month.Month == todayDatetime.Date.Month && Model.Year == todayDatetime.Date.Year)
+                                        ? "text-info" : "";
+
+                                        <td class="text-center text-nowrap @isCurrentDateClass" id="@(Model.Month.Day[(28-skipDays)+w].Day.ToString() +Model.Month.Month.ToString()+ Model.CurrentDate.Year.ToString())" data-year="@Model.CurrentDate.Year" data-month="@Model.Month.Month"
+                                            data-day="@Model.Month.Day[(28-skipDays)+w].Day">
+                                            <span class="dayclick"> @Model.Month.Day[(28-skipDays)+w].Day</span>
+                                        </td>
+                                        isCurrentDateClass = "";
+                                    }
+                                    else
+                                    {
+                                        <td class=" text-center  text-nowrap ">
+                                        </td>
+                                    }
+                                    if ((35 - skipDays) + w < Model.Month.Day.Count)
+                                    {
+                                        isCurrentDateClass = (@Model.Month.Day[(35 - (skipDays) + w)].Day == todayDatetime.Date.Day && @Model.Month.Month == todayDatetime.Date.Month && Model.Year == todayDatetime.Date.Year)
+                                        ? "text-info" : "";
+
+                                        <td class=" text-center  text-nowrap @isCurrentDateClass" id="@(Model.Month.Day[(35-skipDays)+w].Day.ToString() +Model.Month.Month.ToString()+ Model.CurrentDate.Year.ToString())" data-year="@Model.CurrentDate.Year" data-month="@Model.Month.Month"
+                                        data-day="@Model.Month.Day[(35-skipDays)+w].Day">
+                                            <span class="dayclick"> @Model.Month.Day[(35-skipDays)+w].Day</span>
+                                        </td>
+                                        isCurrentDateClass = "";
+                                    }
+                                    else
+                                    {
+                                        <td class=" text-center  text-nowrap " >
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </table>
+                </div>
+            }
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-white m-3 shadow p-3 w-100 m-auto mb-3" id="">
+            <div class="card-title">
+                Event Details
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 col-12">
+                        <label class="form-label CurrentMonthMorningHalf ">Morning Half Count: @Model.AttendanceDetails.CurrentMonthMorningHalf</label>
+                        <label class="form-label CurrentMonthMorningFull">Morning Full Count: @Model.AttendanceDetails.CurrentMonthMorningFull</label>
+                    </div>
+                    <div class="col-md-12 col-12">
+                        <label class="form-label CurrentMonthEveningHalf">Evening Half Counts: @Model.AttendanceDetails.CurrentMonthEveningHalf</label>
+                        <label class="form-label CurrentMonthEveningFull">Evening Full Counts: @Model.AttendanceDetails.CurrentMonthEveningFull</label>
+                    </div>
+                    <div class="col-md-12 col-12">
+                        <label class="form-label CurrentMonthAmt">Amount of month : @Model.AttendanceDetails.CurrentMonthAmt</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@section Scripts{
+
+    <script>
+
+        document.getElementById("CurrentMonth").addEventListener("change", function () {
+            document.getElementById("calenderForm").submit();
+        });
+
+        document.getElementById("CurrentYear").addEventListener("change", function () {
+            document.getElementById("calenderForm").submit();
+        });
+
+        document.getElementById("btnPreviousMonth").addEventListener("click", function () {
+            if (parseInt(document.getElementById("CurrentMonth").value) == 1) {
+                var nextMonth = 12;
+                document.getElementById("CurrentMonth").value = nextMonth;
+                var nextYear = parseInt(document.getElementById("CurrentYear").value) - 1;
+                document.getElementById("CurrentYear").value = nextYear;
+            } else {
+                var nextMonth = parseInt(document.getElementById("CurrentMonth").value) - 1;
+                document.getElementById("CurrentMonth").value = nextMonth;
+                document.getElementById("calenderForm").submit();
+            }
+
+        });
+
+        document.getElementById("btnNextMonth").addEventListener("click", function () {
+            if (parseInt(document.getElementById("CurrentMonth").value) < 12) {
+                var nextMonth = parseInt(document.getElementById("CurrentMonth").value) + 1;
+                document.getElementById("CurrentMonth").value = nextMonth;
+            } else {
+                var nextMonth = 1;
+                document.getElementById("CurrentMonth").value = nextMonth;
+                var nextYear = parseInt(document.getElementById("CurrentYear").value) + 1;
+                document.getElementById("CurrentYear").value = nextYear;
+            }
+            document.getElementById("calenderForm").submit();
+        });
+
+        $(document).ready(function () {
+            var date = "";
+            updateAmount();
+
+            $(".dayclick").click(function () {
+                date = $(this).parent().data("year") + "-" + $(this).parent().data("month") + "-" + $(this).parent().data("day");
+
+                var existsurl = "@Url.Action("EventExists","Home")";
+
+                var obj = { date: date, attendance: "", time: "" };
+                var morning = false;
+                var evening = false;
+
+                $.ajax({
+                    method: "post",
+                    url: existsurl,
+                    async: true,
+                    dataType: 'json',
+                    data: obj,
+                    success: function (data) {
+
+                        $.each(data, function (k, v) {
+                            if (v.attendanceTime == "evening") {
+                                evening = true;
+                            }
+                            if (v.attendanceTime == "morning") {
+                                morning = true;
+                            }
+                        });
+
+                        $("#attendanceModal").find(".currentDate").text("Date :" + date);
+
+                        $("#attendanceModal").find("#MorningCheck").attr("disabled", morning);
+                        $("#attendanceModal").find("#EveningCheck").attr("disabled", evening);
+
+                        if (morning) {
+                            $("#attendanceModal").find("#saveMorningTiffin").addClass("d-none");
+                            $("#attendanceModal").find("#MorningCheck").prop("checked", morning);
+
+                        }
+                        if (evening) {
+                            $("#attendanceModal").find("#saveEveningTiffin").addClass("d-none");
+                            $("#attendanceModal").find("#EveningCheck").prop("checked", evening);
+                        }
+
+                        $("#attendanceModal").modal("show");
+                    }
+                });
+
+
+
+            });
+
+            $(".attendancecheck").click(function () {
+                var attendance = $(this).is(':checked');
+
+                if (attendance == true) {
+                    $(this).parent().parent().siblings().removeClass("d-none").children().removeClass("d-none");
+                } else
+                    $(this).parent().parent().siblings().addClass("d-none").children().addClass("d-none");
+            });
+
+
+            $(".savetiffin").click(function () {
+
+                var existsurl = "@Url.Action("EventExists","Home")";
+                var url = "@Url.Action("DateClick","Home")";
+                var attendance = $(this).siblings('.form-check').children(".attendancecheck").is(':checked');
+                var time = $(this).data("time");
+
+                var halffull = "";
+
+                if (time == 'morning')
+                    halffull = $(this).parent().siblings().find("input[name='lunch']:checked").val();
+                if (time == 'evening')
+                    halffull = $(this).parent().siblings().find("input[name='dinner']:checked").val();
+
+                var obj = { date: date, attendance: attendance, time: time, type: halffull };
+
+                $.ajax({
+                    method: "post",
+                    url: url,
+                    dataType: 'json',
+                    data: obj,
+                    success: function (data) {
+                        if (data == true) {
+                            Swal.fire('Info saved succesfully.');
+                            resetModalData();
+                            updateAmount();
+                        }
+
+                    }
+                });
+            });
+
+            function resetModalData() {
+                $("#attendanceModal").find(".attendancecheck").parent().parent().siblings().addClass("d-none").children().addClass("d-none");
+                $("#attendanceModal").find("#MorningCheck").attr("checked", false);
+                $("#attendanceModal").find("#EveningCheck").attr("checked", false);
+            }
+
+            function updateAmount() {
+
+                var calenderurl = "@Url.Action("GetMonthMealDetails","Home")";
+
+                var halffull = "";
+
+                $.ajax({
+                    method: "get",
+                    url: calenderurl,
+                    dataType: 'json',
+                    success: function (resp) {
+                        $(".CurrentMonthMorningHalf").text("Morning Half Count : " + resp.attendanceDetails.currentMonthMorningHalf);
+                        $(".CurrentMonthMorningFull").text("Morning Full Count : " + resp.attendanceDetails.currentMonthMorningFull);
+                        $(".CurrentMonthEveningHalf").text("Evening Half Count: " + resp.attendanceDetails.currentMonthEveningHalf);
+                        $(".CurrentMonthEveningFull").text("Evening Full Count: " + resp.attendanceDetails.currentMonthEveningFull);
+                        $(".CurrentMonthAmt").text("Amount of month : " + resp.attendanceDetails.currentMonthAmt);
+
+                    }
+                });
+            }
+        });
+    </script>
+                            }
+

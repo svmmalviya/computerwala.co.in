@@ -1,0 +1,91 @@
+﻿@{
+    TempData["Title"] = "LoginView";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @_localizer.GetValue("CompanyTitle")</title>
+    <link rel="icon" type="image/x-icon" href="~/user-assets/img/logo_black.png">
+
+
+    <meta content="Computerwala.co.in is a attendance management system and other utility" name="description">
+    <meta content="computerwala computer_wala computer wala computerwala.co.in is a attendance management system and other utility" name="keywords">
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    @* <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> *@
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playball&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Icon Font Stylesheet -->
+    @* <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" /> *@
+    @* <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"> *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" integrity="sha512-oAvZuuYVzkcTc2dH5z1ZJup5OmSQ000qlfRvuoTTiyTBjwX1faoyearj8KdMq0LgsBTHMrRuMek7s+CxF8yE+w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Libraries Stylesheet -->
+    <link href="~/user-assets/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="~/user-assets/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="~/user-assets/lib/owlcarousel/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="~/user-assets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="~/user-assets/css/style.css" rel="stylesheet">
+    <style>
+        .dayclick:hover {
+           
+        }
+
+        .calenderRow {
+            max-width: 450px !important;
+        }
+
+        .dayclick {
+        }
+    </style>
+</head>
+<body>
+@* 
+    <!-- Spinner Start -->
+    <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status"></div>
+    </div> *@
+    <div class="container-fluid py-4 wow fadeInUp" data-wow-delay="0.1s">
+        <form asp-action="Login" asp-asp-controller="Home">
+            <div class="modal fade bg-primary" id="loginModal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog dodal-dialog-centered">
+                    <div class="modal-content rounded-1 p-4">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Computerwala Login</h5>
+                            @* <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+                        </div>
+                        <div class="modal-body ">
+                            @(await Component.InvokeAsync("Login", new ProfileView()))
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            
+            
+                $("#loginModal").modal("show");
+               
+            
+
+
+        });
+    </script>
+}
