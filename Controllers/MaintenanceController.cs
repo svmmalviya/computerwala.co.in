@@ -3,7 +3,6 @@ using DBService.Interfaces;
 using DBService.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using computerwala.Models;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Extensions.FileProviders;
 using System.Text;
 using System.IO;

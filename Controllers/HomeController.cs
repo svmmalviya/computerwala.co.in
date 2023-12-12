@@ -1,8 +1,8 @@
-﻿using Azure;
-using computerwala.Base;
+﻿using computerwala.Base;
 using computerwala.DBService.APIModels;
 using computerwala.DBService.Models;
 using computerwala.Models;
+using ComputerWala.DBService1;
 using DBService.APIModels;
 using DBService.AppContext;
 using DBService.Interfaces;
@@ -15,12 +15,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
-using RestSharp;
-using System;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text.Json.Serialization;
 
 namespace computerwala.Controllers
 {
