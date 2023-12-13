@@ -2,6 +2,8 @@
 using computerwala.DBService.APIModels;
 using computerwala.DBService.Models;
 using computerwala.Models;
+using Computerwala.Models;
+using ComputerWala.DBService.DBService.Interfaces;
 using ComputerWala.DBService1;
 using DBService.APIModels;
 using DBService.AppContext;
@@ -9,6 +11,7 @@ using DBService.Interfaces;
 using DBService.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -16,6 +19,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace computerwala.Controllers
 {
@@ -27,11 +32,12 @@ namespace computerwala.Controllers
         private readonly ICWSubscription cWSubscription;
         private readonly ICWCalender cWCalender;
         private readonly ICWEvent cWEvent;
+        private readonly ICWUser cWUser;
         private readonly AppDBContext dBContext;
         private static string Message = "";
 
         public HomeController(ILogger<HomeController> logger, IMemoryCache cache, IAuthentication authentication, ICWSubscription cWSubscription,
-            ICWCalender calender, ICWEvent cWEvent, AppDBContext dBContext)
+            ICWCalender calender, ICWEvent cWEvent, AppDBContext dBContext, ICWUser cWUser)
         {
             _logger = logger;
             _cache = cache;
@@ -39,6 +45,7 @@ namespace computerwala.Controllers
             this.cWSubscription = cWSubscription;
             this.cWCalender = calender;
             this.cWEvent = cWEvent;
+            this.cWUser = cWUser;
             dBContext = dBContext;
         }
 
@@ -52,7 +59,43 @@ namespace computerwala.Controllers
         [HttpGet]
         public async Task<IActionResult> LoginView()
         {
-            return View();
+            return View(new ProfileView());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(ProfileView profile)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await cWUser.LoginExists(profile);
+
+                if (response.Success)
+                {
+                    var profileExists = JsonConvert.DeserializeObject<CWLogins>(response.Data);
+                    if (profileExists != null)
+                    {
+                        this.HttpContext.Session.SetInt32("loggedin", 1);
+                        this.HttpContext.Session.SetString("userid", profileExists.Id);
+                        this.HttpContext.Session.SetString("username", profileExists.Username);
+                        return RedirectToAction("CWCalender");
+                    }
+                }
+            }
+
+            return View("LoginView");
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+
+            this.HttpContext.Session.SetInt32("loggedin",0);
+            this.HttpContext.Session.SetString("userid", string.Empty);
+            this.HttpContext.Session.SetString("username", string.Empty);
+            return RedirectToAction("CWCalender");
+
+
+            return View("LoginView");
         }
 
         [HttpGet]

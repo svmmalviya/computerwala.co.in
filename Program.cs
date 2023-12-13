@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using computerwala.LanguageServices;
 using System;
+using ComputerWala.DBService.DBService.Repositories;
+using ComputerWala.DBService.DBService.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -51,14 +53,12 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 
 builder.Services.AddDbContext<AppDBContext>(o =>
 {
-
-
     var connectionStr = "";
 
     if (builder.Configuration["dbtype"].ToLower() == "mysql")
     {
         connectionStr = builder.Configuration.GetConnectionString("MySqlConnection");
-        o.UseMySQL(connectionStr);
+        o.UseMySQL(connectionStr,b=>b.MigrationsAssembly("ComputerWala.DBService"));
     }
     else
     {
@@ -143,6 +143,7 @@ builder.Services.AddTransient<HomeController>()
 .AddTransient<ICWEvent, CWEvent>()
 .AddTransient<ICWCalender, CWCalender>()
 .AddTransient<ICWSubscription, CWSubscription>()
+.AddTransient<ICWUser, CWUser>()
 .AddTransient<MaintenanceMW>();
 #endregion
 
