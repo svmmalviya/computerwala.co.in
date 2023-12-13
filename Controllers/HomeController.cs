@@ -2,13 +2,16 @@
 using computerwala.DBService.APIModels;
 using computerwala.DBService.Models;
 using computerwala.Models;
+using Computerwala.Models;
+using ComputerWala.DBService.DBService.Interfaces;
 using ComputerWala.DBService1;
-using DBService.APIModels;
-using DBService.AppContext;
-using DBService.Interfaces;
-using DBService.Models;
+using ComputerWala.APIModels;
+using ComputerWala.AppContext;
+using ComputerWala.Interfaces;
+using ComputerWala.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -16,6 +19,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace computerwala.Controllers
 {
@@ -27,11 +32,13 @@ namespace computerwala.Controllers
         private readonly ICWSubscription cWSubscription;
         private readonly ICWCalender cWCalender;
         private readonly ICWEvent cWEvent;
+        private readonly ICWUser cWUser;
         private readonly AppDBContext dBContext;
         private static string Message = "";
+        private static string UserId = string.Empty;
 
         public HomeController(ILogger<HomeController> logger, IMemoryCache cache, IAuthentication authentication, ICWSubscription cWSubscription,
-            ICWCalender calender, ICWEvent cWEvent, AppDBContext dBContext)
+            ICWCalender calender, ICWEvent cWEvent, AppDBContext dBContext, ICWUser cWUser)
         {
             _logger = logger;
             _cache = cache;
@@ -39,6 +46,7 @@ namespace computerwala.Controllers
             this.cWSubscription = cWSubscription;
             this.cWCalender = calender;
             this.cWEvent = cWEvent;
+            this.cWUser = cWUser;
             dBContext = dBContext;
         }
 
@@ -52,14 +60,93 @@ namespace computerwala.Controllers
         [HttpGet]
         public async Task<IActionResult> LoginView()
         {
-            return View();
+            return View(new LoginView());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginView profile)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await cWUser.LoginExists(profile);
+
+                if (response.Success)
+                {
+                    var profileExists = JsonConvert.DeserializeObject<CWLogins>(response.Data);
+                    if (profileExists != null)
+                    {
+                        SetSession(profileExists);
+                        return RedirectToAction("CWCalender");
+                    }
+                }
+            }
+
+            return View("LoginView", profile);
+        }
+        [HttpGet]
+        public async Task<IActionResult> Register()
+        {
+            ProfileView profileView = new ProfileView();
+            return View(profileView);
+        }
+
+        private void SetSession(CWLogins profileExists)
+        {
+            if (profileExists != null)
+            {
+                UserId = profileExists.Id;
+                this.HttpContext.Session.SetInt32("loggedin", 1);
+                this.HttpContext.Session.SetString("userid", profileExists.Id);
+                this.HttpContext.Session.SetString("username", profileExists.Username);
+
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(ProfileView profile)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await cWUser.Register(profile);
+
+                if (response.Success)
+                {
+                    var id = JsonConvert.DeserializeObject<string>(response.Data);
+                    response = await cWUser.GetUserById(id);
+
+                    if (response != null && response.Success)
+                    {
+                        var user = JsonConvert.DeserializeObject<CWLogins>(response.Data);
+
+                        if (user != null)
+                        {
+                            SetSession(user);
+                            return RedirectToAction("CWCalender");
+                        }
+                    }
+                }
+            }
+
+            return View("Register", profile);
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+
+            this.HttpContext.Session.SetInt32("loggedin", 0);
+            this.HttpContext.Session.SetString("userid", string.Empty);
+            this.HttpContext.Session.SetString("username", string.Empty);
+            return RedirectToAction("LoginView");
+
         }
 
         [HttpGet]
         public async Task<IActionResult> Preferences()
         {
+            var userid = this.HttpContext.Session.GetString("userid");
             var preference = new CWTiffinsPreferences();
-            var response = await cWEvent.GetTiffinPreferences();
+            var response = await cWEvent.GetTiffinPreferences(userid);
             ViewBag.message = Message;
 
             if (response.Success)
@@ -75,6 +162,8 @@ namespace computerwala.Controllers
         [HttpPost]
         public async Task<IActionResult> Preferences(CWTiffinsPreferences preferences)
         {
+            var userid = this.HttpContext.Session.GetString("userid");
+            preferences.UserId = userid;
             var response = await cWEvent.SaveTiffinPreferences(preferences);
             if (response.Success)
             {
@@ -163,40 +252,45 @@ namespace computerwala.Controllers
 
             try
             {
-
                 if (response.Success)
                     calender = JsonConvert.DeserializeObject<CWCurrentMonth>(response.Data);
 
-                response = await cWEvent.GetAttendanceDetails(calender.Year, calender.Month.Month);
+                response = await cWEvent.PreferencesExists(UserId);
 
                 if (response.Success)
-                {
-                    var configurationwithattendance = JsonConvert.DeserializeObject<CWTiffinAttendanceWithConfiguration>(response.Data);
-                    foreach (var item in configurationwithattendance.Attendances)
+                {                   
+
+                    response = await cWEvent.GetAttendanceDetails(calender.Year, calender.Month.Month, UserId);
+
+                    if (response.Success)
                     {
-                        if (item.AttendanceTime.ToLower() == "morning")
+                        var configurationwithattendance = JsonConvert.DeserializeObject<CWTiffinAttendanceWithConfiguration>(response.Data);
+                        foreach (var item in configurationwithattendance.Attendances)
                         {
-                            if (item.Type.ToLower() == "h")
-                                currentMonth.CurrentMonthMorningHalf++;
-                            if (item.Type.ToLower() == "f")
-                                currentMonth.CurrentMonthMorningFull++;
+                            if (item.AttendanceTime.ToLower() == "morning")
+                            {
+                                if (item.Type.ToLower() == "h")
+                                    currentMonth.CurrentMonthMorningHalf++;
+                                if (item.Type.ToLower() == "f")
+                                    currentMonth.CurrentMonthMorningFull++;
+                            }
+
+                            if (item.AttendanceTime.ToLower() == "evening")
+                            {
+                                if (item.Type.ToLower() == "h")
+                                    currentMonth.CurrentMonthEveningHalf++;
+                                if (item.Type.ToLower() == "f")
+                                    currentMonth.CurrentMonthEveningFull++;
+                            }
+
                         }
 
-                        if (item.AttendanceTime.ToLower() == "evening")
-                        {
-                            if (item.Type.ToLower() == "h")
-                                currentMonth.CurrentMonthEveningHalf++;
-                            if (item.Type.ToLower() == "f")
-                                currentMonth.CurrentMonthEveningFull++;
-                        }
+                        currentMonth.CurrentMonthAmt = (currentMonth.CurrentMonthMorningHalf * configurationwithattendance.Configuration.HalfMealAmount) +
+                            (currentMonth.CurrentMonthMorningFull * configurationwithattendance.Configuration.FullMealAmount) +
+                            (currentMonth.CurrentMonthEveningHalf * configurationwithattendance.Configuration.HalfMealAmount) +
+                            (currentMonth.CurrentMonthEveningFull * configurationwithattendance.Configuration.FullMealAmount);
 
                     }
-
-                    currentMonth.CurrentMonthAmt = (currentMonth.CurrentMonthMorningHalf * configurationwithattendance.Configuration.HalfMealAmount) +
-                        (currentMonth.CurrentMonthMorningFull * configurationwithattendance.Configuration.FullMealAmount) +
-                        (currentMonth.CurrentMonthEveningHalf * configurationwithattendance.Configuration.HalfMealAmount) +
-                        (currentMonth.CurrentMonthEveningFull * configurationwithattendance.Configuration.FullMealAmount);
-
                 }
                 calender.AttendanceDetails = currentMonth;
 
@@ -227,7 +321,7 @@ namespace computerwala.Controllers
             var response = new ApiResponse();
             try
             {
-                response = await cWEvent.GetAttendanceDetails(calender.Year, calender.Month.Month);
+                response = await cWEvent.GetAttendanceDetails(calender.Year, calender.Month.Month, UserId);
 
                 if (response.Success)
                 {
@@ -266,7 +360,7 @@ namespace computerwala.Controllers
             }
             catch (Exception e)
             {
-                throw e;
+                //throw e;
             }
 
             return calender;
@@ -316,19 +410,25 @@ namespace computerwala.Controllers
 
             CWAttendance cWAttendance = new CWAttendance
             {
-                Active = false,
+                Status = 1,
                 AttendanceDate = Convert.ToDateTime(Convert.ToDateTime(attendanceTime.date).ToString("yyyy-MM-dd")),
                 AttendanceTime = attendanceTime.time,
                 CreatedOn = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")),
                 HasAttended = true,
-                Type = attendanceTime.type
+                Type = attendanceTime.type,
+                UserId = UserId
 
             };
-            var response = await cWEvent.SaveEvent(cWAttendance);
 
-            var resp = JsonConvert.DeserializeObject<bool>(response.Data);
+            var response = await cWEvent.PreferencesExists(UserId);
+            if (response != null && response.Success)
+            {
+                response = await cWEvent.SaveEvent(cWAttendance);
+                var resp = JsonConvert.DeserializeObject<bool>(response.Data);
+                return Json(resp);
+            }
 
-            return Json(resp);
+            return Json(false);
         }
 
         [HttpPost]
@@ -341,11 +441,12 @@ namespace computerwala.Controllers
 
                 CWAttendance cWAttendance = new CWAttendance
                 {
-                    Active = false,
+                    Status = 1,
                     AttendanceDate = Convert.ToDateTime(attendanceTime.date).Date,
                     AttendanceTime = attendanceTime.time,
                     CreatedOn = DateTime.Now.Date,
-                    HasAttended = true
+                    HasAttended = true,
+                    UserId = UserId
 
                 };
                 var response = await cWEvent.EventExists(cWAttendance);

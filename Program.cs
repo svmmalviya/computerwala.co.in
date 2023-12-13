@@ -3,9 +3,9 @@ using computerwala.MWs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using DBService.Repositories;
-using DBService.Interfaces;
-using DBService.AppContext;
+using ComputerWala.Repositories;
+using ComputerWala.Interfaces;
+using ComputerWala.AppContext;
 using computerwala.Controllers;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using computerwala.LanguageServices;
 using System;
+using ComputerWala.DBService.DBService.Repositories;
+using ComputerWala.DBService.DBService.Interfaces;
+using computerwala.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -37,6 +40,9 @@ builder.Services.AddMvc(o =>
     };
 });
 
+builder.Services.AddSignalR();
+
+
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var resourceList = new List<CultureInfo> {
@@ -51,14 +57,12 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 
 builder.Services.AddDbContext<AppDBContext>(o =>
 {
-
-
     var connectionStr = "";
 
     if (builder.Configuration["dbtype"].ToLower() == "mysql")
     {
         connectionStr = builder.Configuration.GetConnectionString("MySqlConnection");
-        o.UseMySQL(connectionStr);
+        o.UseMySQL(connectionStr,b=>b.MigrationsAssembly("ComputerWala.DBService"));
     }
     else
     {
@@ -141,8 +145,10 @@ builder.Services.AddTransient<HomeController>()
 .AddScoped<MaintenanceController>()
 .AddTransient<IAuthentication, Authentication>()
 .AddTransient<ICWEvent, CWEvent>()
+.AddTransient<ICWAdminDashboard, CWAdminDashboard>()
 .AddTransient<ICWCalender, CWCalender>()
 .AddTransient<ICWSubscription, CWSubscription>()
+.AddTransient<ICWUser, CWUser>()
 .AddTransient<MaintenanceMW>();
 #endregion
 
@@ -177,7 +183,7 @@ app.UseRouting();
 app.UseAuthorization();
 app.UseSession();
 
-
+app.MapHub<CommunicationHub>("/CWHub");
 
 app.UseMvc(o =>
 {

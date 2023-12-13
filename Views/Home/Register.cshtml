@@ -1,7 +1,7 @@
-﻿@model LoginView
+﻿@model ProfileView
 
 @{
-    TempData["Title"] = "LoginView";
+    TempData["Title"] = "Register";
     Layout = null;
 }
 
@@ -35,16 +35,16 @@
     <link href="~/user-assets/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="~/user-assets/css/style.css" rel="stylesheet">   
+    <link href="~/user-assets/css/style.css" rel="stylesheet">
 </head>
 <body>
 
     <!-- Spinner Start -->
     @* <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
-        <div class="spinner-grow text-primary" role="status"></div>
+    <div class="spinner-grow text-primary" role="status"></div>
     </div> *@
     <div class="container-fluid py-4 wow fadeInUp" data-wow-delay="0.1s">
-        <form asp-action="Login" asp-controller="Home" method="post">
+        <form asp-action="Register" asp-asp-controller="Home"  method="post">
             <div class="" id="loginModal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog dodal-dialog-centered">
                     <div class="modal-content rounded-1 p-4">
@@ -65,13 +65,18 @@
                                 <input asp-for="@Model.Password" class="form-control" />
                                 <span class="text-danger" asp-asp-validation-for="@Model.Password"></span>
                             </div>
+                            <div class="form-group mb-4">
+                                <label class="form-label" asp-for="@Model.ConfirmPassword"></label>
+                                <input asp-for="@Model.ConfirmPassword" class="form-control" />
+                                <span class="text-danger" asp-asp-validation-for="@Model.ConfirmPassword"></span>
+                            </div>
                             <div class="form-check mb-4">
                                 <label class="form-check-label" asp-for="@Model.RememberMe"></label>
                                 <input asp-for="@Model.RememberMe" class="form-check-input" />
                             </div>
                             <div class="form-group">
 
-                                <button class="btn btn-sm btn-primary float-end">Login</button>
+                                <button class="btn btn-sm btn-primary float-end">Register</button>
 
                             </div>
                         </div>
@@ -89,11 +94,11 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
-            
-            
-                $("#loginModal").modal("show");
-               
-            
+
+
+            $("#loginModal").modal("show");
+
+
 
 
         });

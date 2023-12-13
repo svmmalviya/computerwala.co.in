@@ -2,10 +2,9 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
-using RestSharp;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http.Extensions;
-using DBService.Interfaces;
+using ComputerWala.Interfaces;
 using System.Runtime.Caching;
 using MemoryCache = System.Runtime.Caching.MemoryCache;
 using Newtonsoft.Json.Linq;

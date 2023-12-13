@@ -1,6 +1,6 @@
-﻿using DBService.APIModels;
-using DBService.Interfaces;
-using DBService.Repositories;
+﻿using ComputerWala.APIModels;
+using ComputerWala.Interfaces;
+using ComputerWala.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using computerwala.Models;
 using Microsoft.Extensions.FileProviders;
