@@ -62,7 +62,7 @@ builder.Services.AddDbContext<AppDBContext>(o =>
     if (builder.Configuration["dbtype"].ToLower() == "mysql")
     {
         connectionStr = builder.Configuration.GetConnectionString("MySqlConnection");
-        o.UseMySQL(connectionStr,b=>b.MigrationsAssembly("ComputerWala.DBService"));
+        o.UseMySQL(connectionStr, b => b.MigrationsAssembly("ComputerWala.DBService"));
     }
     else
     {

@@ -21,6 +21,9 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace computerwala.Controllers
 {
@@ -258,7 +261,7 @@ namespace computerwala.Controllers
                 response = await cWEvent.PreferencesExists(UserId);
 
                 if (response.Success)
-                {                   
+                {
 
                     response = await cWEvent.GetAttendanceDetails(calender.Year, calender.Month.Month, UserId);
 
