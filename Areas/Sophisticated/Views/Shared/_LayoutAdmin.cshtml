@@ -26,8 +26,16 @@
     <link href="~/admin-assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="~/admin-assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
+
     <!-- Template Main CSS File -->
     <link href="~/admin-assets/css/style.css" rel="stylesheet">
+    <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/CWHub")
+            .build();
+        connection.start();
+    </script>
 </head>
 <body>
     <header id="header" class="header fixed-top d-flex align-items-center">
@@ -466,14 +474,7 @@
                     <i class="bi bi-card-list"></i>
                     <span>Register</span>
                 </a>
-            </li><!-- End Register Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-login.html">
-                    <i class="bi bi-box-arrow-in-right"></i>
-                    <span>Login</span>
-                </a>
-            </li><!-- End Login Page Nav -->
+            </li><!-- End Register Page Nav -->           
 
             <li class="nav-item">
                 <a class="nav-link collapsed" href="pages-error-404.html">
@@ -488,6 +489,13 @@
                     <span>Blank</span>
                 </a>
             </li><!-- End Blank Page Nav -->
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" asp-action="LoginView" asp-controller="Home">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span>Sign-Out</span>
+                </a>
+            </li><!-- End Login Page Nav -->
 
         </ul>
 
@@ -520,7 +528,7 @@
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
 
-    <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+   
     <!-- Vendor JS Files -->
     <script src="~/admin-assets/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="~/admin-assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -536,12 +544,7 @@
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @* <script src="~/lib/signalr.js/jquery.signalr.min.js"></script> *@
-    <script>
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/CWHub")
-            .build();
-        connection.start();
-    </script>
+   
     @RenderSection("Scripts",false)
 </body>
 </html>

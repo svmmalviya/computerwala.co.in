@@ -44,7 +44,7 @@
     <div class="spinner-grow text-primary" role="status"></div>
     </div> *@
     <div class="container-fluid py-4 wow fadeInUp" data-wow-delay="0.1s">
-        <form asp-action="Register" asp-asp-controller="Home"  method="post">
+        <form asp-action="Register" asp-asp-controller="Home" method="post">
             <div class="" id="loginModal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog dodal-dialog-centered">
                     <div class="modal-content rounded-1 p-4">
@@ -86,21 +86,25 @@
             </div>
         </form>
     </div>
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
 
 
 
-@section Scripts{
     <script>
         $(document).ready(function () {
 
+            var errorMessage = '@ViewBag.Message';
 
-            $("#loginModal").modal("show");
+           
 
+            if (errorMessage != "") {
+                Swal.fire(errorMessage);
+            }
 
-
+        $("#loginModal").modal("show");
 
         });
     </script>
-}

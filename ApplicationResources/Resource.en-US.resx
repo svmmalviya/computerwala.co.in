@@ -123,6 +123,9 @@
   <data name="CompanyTitle" xml:space="preserve">
     <value>ComputerWala</value>
   </data>
+  <data name="Holidays" xml:space="preserve">
+    <value>Holidays</value>
+  </data>
   <data name="Menu_Calender" xml:space="preserve">
     <value>CALENDER</value>
   </data>
@@ -134,5 +137,8 @@
   </data>
   <data name="Menu_Services" xml:space="preserve">
     <value>SERVICES</value>
+  </data>
+  <data name="Tiffin_Details" xml:space="preserve">
+    <value>Tiffin Details </value>
   </data>
 </root>

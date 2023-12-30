@@ -123,6 +123,9 @@
   <data name="CompanyTitle" xml:space="preserve">
     <value>कंप्यूटरवाला</value>
   </data>
+  <data name="Holidays" xml:space="preserve">
+    <value>छुट्टियां</value>
+  </data>
   <data name="Menu_Calender" xml:space="preserve">
     <value>पंचांग</value>
   </data>
@@ -134,5 +137,8 @@
   </data>
   <data name="Menu_Services" xml:space="preserve">
     <value>सेवाएँ</value>
+  </data>
+  <data name="Tiffin_Details" xml:space="preserve">
+    <value>टिफ़िन विवरण</value>
   </data>
 </root>
