@@ -6,6 +6,7 @@
     var culture = @Thread.CurrentThread.CurrentUICulture.Name == "en-US" ? "hi-IN" : "en-US";
 
     _home.SaveVisitor();
+    
 }
 
 
@@ -59,6 +60,15 @@
             margin: auto;
         }
     </style>
+
+    <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/CWHub")
+            .build();
+        connection.start();
+    </script>
+
 </head>
 <body>
 
@@ -107,30 +117,25 @@
                             <i class="fa fa-cog" aria-hidden="true"></i>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                            @if (this.Context.Session.GetString("username") != null)
+                            @if (this.Context.Session.GetString("Username") != null)
                             {
-                                var username = this.Context.Session.GetString("username");
+                                var username = this.Context.Session.GetString("Username");
                                 if (username != string.Empty)
                                 {
                                     <li><a class="dropdown-item" href="#"> <i class="fas fa-user-alt pe-2"></i>@username</a></li>
-                                }
-                                else
-                                {
-                                    <li><a class="dropdown-item" href="#"> <i class="fas fa-user-alt pe-2"></i>Profile</a></li>
-                                }
+                                }                                
+                            }
+                            
+                            
+                            @if (this.Context.Session.GetInt32("IsLoggedIn") != null && this.Context.Session.GetInt32("IsLoggedIn") == 1)
+                            {
+                                <li><a class="dropdown-item" asp-action="Preferences" asp-controller="Home"> <i class="fas fa-cog pe-2"></i>Preferences</a></li>
+                                <li><a class="dropdown-item" asp-action="Logout" asp-controller="Home"><i class="fas fa-door-open pe-2"></i>Sign-Out</a></li>
                             }
                             else
                             {
-                                <li><a class="dropdown-item" href="#"> <i class="fas fa-user-alt pe-2"></i>Profile</a></li>
-                            }
-                            <li><a class="dropdown-item" asp-action="Preferences" asp-controller="Home"> <i class="fas fa-cog pe-2"></i>Preferences</a></li>
-                            @if (this.Context.Session.GetInt32("loggedin") != null && this.Context.Session.GetInt32("loggedin") == 1)
-                            {
-                                <li><a class="dropdown-item" asp-action="Logout" asp-controller="Home"><i class="fas fa-door-open pe-2"></i>Logout</a></li>
-                            }
-                            else
-                            {
-                                <li><a class="dropdown-item" asp-action="LoginView" asp-controller="Home"><i class="fas fa-door-open pe-2"></i>Login</a></li>
+                                <li><a class="dropdown-item" asp-action="LoginView" asp-controller="Home"><i class="fas fa-door-open pe-2"></i>Sign-In</a></li>
+                                <li><a class="dropdown-item" asp-action="Register" asp-controller="Home"><i class="fas fa-door-open pe-2"></i>Sign-Up</a></li>
                             }
                         </ul>
                     </div>
@@ -370,14 +375,9 @@
             </div>
         </div>
     </div>
-    <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/CWHub")
-            .build();
-        connection.start();
-    </script>
+
 </body>
 </html>

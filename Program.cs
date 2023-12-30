@@ -17,17 +17,22 @@ using System;
 using ComputerWala.DBService.DBService.Repositories;
 using ComputerWala.DBService.DBService.Interfaces;
 using computerwala.Utility;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddMemoryCache();
 builder.Services.AddSerilog();
-builder.Services.AddSession();
+builder.Services.AddSession(o => {
+    o.IdleTimeout = TimeSpan.FromMinutes(5);
+});
 builder.Services.AddLocalization(option =>
-{
+{    
     option.ResourcesPath = "ApplicationResources";
 });
+
+
 builder.Services.AddMvc(o =>
 {
     o.EnableEndpointRouting = false;
@@ -39,6 +44,7 @@ builder.Services.AddMvc(o =>
         return factory.Create("Resource", assemblyName.Name);
     };
 });
+
 
 builder.Services.AddSignalR();
 
@@ -149,8 +155,18 @@ builder.Services.AddTransient<HomeController>()
 .AddTransient<ICWCalender, CWCalender>()
 .AddTransient<ICWSubscription, CWSubscription>()
 .AddTransient<ICWUser, CWUser>()
-.AddTransient<MaintenanceMW>();
+.AddTransient<MaintenanceMW>()
+.AddTransient<LoginMW>();
 #endregion
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromDays(7); // Set the same expiration time as in the login action
+        options.LoginPath = "/Home/LoginView"; // Specify the login path
+        options.AccessDeniedPath = "/Home"; // Specify the access denied path
+    });
 
 var app = builder.Build();
 
@@ -164,6 +180,8 @@ app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
 app.UseCors("AllowSpecificOrigins");
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+app.UseAuthentication();
+
 
 // Create a configuration object to read from appsettings.json
 var configuration = new ConfigurationBuilder()
@@ -182,6 +200,8 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
 app.UseSession();
+app.UseMiddleware<LoginMW>();
+app.UseMiddleware<AdminMW>();
 
 app.MapHub<CommunicationHub>("/CWHub");
 
@@ -191,51 +211,7 @@ app.UseMvc(o =>
     o.MapRoute("admin", "Sophisticated/{controller=Admin}/{action=Index}/{id?}");
 });
 
-//app.UseMvc();
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var db = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-//    db.Database.Migrate();
-//}
-
-
-app.Use(async (context, next) =>
-{
-    var maintenanceenabled = Convert.ToBoolean(app.Configuration["maintenance"]);
-
-    Log.Logger.Information("in maintenance enabled: " + maintenanceenabled);
-    if (maintenanceenabled == true)
-    {
-        Log.Logger.Information("redirecting to maintenance page");
-        context.Response.Redirect("/maintenance/index", true);
-        //context.request.path = "/maintenance/index";
-        return;
-    }
-
-    await next();
-});
-//app.UseMiddleware<MaintenanceMW>();
-
-//app.UseMiddleware<JwtTokenCacheMiddleware>();
-
-
-
-
-
-
-//app.MapDefaultControllerRoute();
-//app.UseEndpoints(endpoints =>
-//{
-//	endpoints.MapControllerRoute(
-//		name: "Admin",
-//		pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
-
-//	// Define your main application routes here.
-//	endpoints.MapControllerRoute(
-//		name: "default",
-//		pattern: "{controller=Home}/{action=Index}/{id?}");
-//});
 
 
 app.Run();
