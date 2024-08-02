@@ -109,6 +109,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ComputerWala.DBService1\ComputerWala.DBService.csproj" />
+    <ProjectReference Include="..\ComputerWala.Model\ComputerWala.Model.csproj" />
   </ItemGroup>
 
 </Project>
