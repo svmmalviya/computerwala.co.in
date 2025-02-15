@@ -37,7 +37,7 @@ steps:
     ConnectionType: 'AzureRM'
     azureSubscription: 'Free Trial(f43772df-3297-4bb0-a864-06d7bc50219c)'
     appType: 'webApp'
-    WebAppName: 
+    WebAppName: 'Default Web Site' 
     VirtualApplication: 'test'
     packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
 
