@@ -32,16 +32,13 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-- task: AzureWebApp@1
+- task: AzureRmWebAppDeployment@4
   inputs:
+    ConnectionType: 'AzureRM'
     azureSubscription: 'Free Trial(f43772df-3297-4bb0-a864-06d7bc50219c)'
     appType: 'webApp'
-    appName: 'Shiv'
-    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
-    deploymentMethod: 'auto'
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    publishWebProjects: true
+    WebAppName: 
+    VirtualApplication: 'test'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
 
 - task: PublishBuildArtifacts@1
