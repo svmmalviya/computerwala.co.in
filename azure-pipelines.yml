@@ -36,7 +36,7 @@ steps:
   inputs:
     azureSubscription: 'Free Trial(f43772df-3297-4bb0-a864-06d7bc50219c)'
     appType: 'webApp'
-    appName: 'test'
+    appName: 'Shiv'
     package: '$(System.DefaultWorkingDirectory)/**/*.zip'
     deploymentMethod: 'auto'
 - task: DotNetCoreCLI@2
