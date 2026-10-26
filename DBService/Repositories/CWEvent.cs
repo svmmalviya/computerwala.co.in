@@ -393,7 +393,7 @@ namespace DBService.Repositories
             return response;
         }
 
-        public async Task<ApiResponse> GetTiffinPreferences()
+        public async Task<ApiResponse> GetTiffinPreferences(string UserId)
         {
             response = new ApiResponse();
             try
@@ -402,7 +402,8 @@ namespace DBService.Repositories
                 var currentDatte = DateTime.Now;
                 using (var connection = _dapperContext.CreateConnection())
                 {
-                    var query = "select * from cwtiffinpreferences limit 1";
+                    var query = "select * from cwtiffinpreferences where UserId = @UserId";
+                    parameters.Add("UserId", UserId, DbType.String);
                     var configuration = await connection.QuerySingleOrDefaultAsync<CWTiffinsPreferences>(query, parameters);
 
                     if (configuration != null)

@@ -56,7 +56,8 @@ namespace computerwala.Controllers
         public async Task<IActionResult> Preferences()
         {
             var preference = new CWTiffinsPreferences();
-            var response = await cWEvent.GetTiffinPreferences();
+            
+            var response = await cWEvent.GetTiffinPreferences(UserId);
             ViewBag.message = Message;
 
             if (response.Success)

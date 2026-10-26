@@ -4,6 +4,11 @@ namespace computerwala.Base
 {
     public class BaseController : Controller
     {
+        public static string UserId = string.Empty; 
+
+        public BaseController()
+        {
+        }
 
         public string GetClientIpAddress()
         {

@@ -1,4 +1,5 @@
 ﻿using Azure;
+using computerwala.Models;
 using Dapper;
 using DBService.APIModels;
 using DBService.AppContext;
@@ -23,7 +24,7 @@ namespace DBService.Repositories
         private DapperContext _dapperContext { get; set; }
 
 
-        public CWAuthentication(ILogger<CWAuthentication > logger, DapperContext dapperContext, AppDBContext appDBContext)
+        public CWAuthentication(ILogger<CWAuthentication> logger, DapperContext dapperContext, AppDBContext appDBContext)
         {
             this._logger = logger;
             _dapperContext = dapperContext;
@@ -80,8 +81,22 @@ namespace DBService.Repositories
 
                     if (count == 1)
                     {
+                        query = "select * from cwlogins where username=@username and password=@pwd";
+                        CWUserData user = await connection.QuerySingleOrDefaultAsync<CWUserData>(query, new { username, pwd });
+
                         response.Success = true;
-                        response.Data = JsonConvert.SerializeObject(true);
+                        if (user != null)
+                        {
+                            response.Data = JsonConvert.SerializeObject(user);
+                            response.Message = String.Empty;
+                        }
+                        else
+                            response.Data = JsonConvert.SerializeObject(true);
+                    }
+                    else
+                    {
+                        response.Success = false;
+                        response.Data = JsonConvert.SerializeObject(false);
                         response.Message = String.Empty;
                     }
                 }

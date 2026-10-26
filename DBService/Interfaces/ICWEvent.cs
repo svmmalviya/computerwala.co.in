@@ -18,7 +18,7 @@ namespace DBService.Interfaces
     public interface ICWEvent : ICWAttendanceDetails
     {
         public Task<ApiResponse> SaveEvent(CWAttendance cWAttendance);
-        public Task<ApiResponse> GetTiffinPreferences();
+        public Task<ApiResponse> GetTiffinPreferences(string UserId);
         public Task<ApiResponse> SaveTiffinPreferences(CWTiffinsPreferences cWTiffinsPreferences);
         public Task<ApiResponse> EventExists(CWAttendance cWAttendance);
 

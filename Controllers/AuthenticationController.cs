@@ -1,7 +1,9 @@
 ﻿using computerwala.Base;
+using computerwala.Models;
 using DBService.Interfaces;
 using DBService.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace computerwala.Controllers
 {
@@ -31,14 +33,25 @@ namespace computerwala.Controllers
         public async Task<IActionResult> Login(CWLoginCredentials cWLoginCredentials)
         {
             var response = await _authentication.CheckLogin(cWLoginCredentials.Username, cWLoginCredentials.Pwd);
-            if (response == null)
+            if (!response.Success)
             {
                 return View();
             }
             else
             {
-                HttpContext.Session.SetString("Login", cWLoginCredentials.Username.ToString());
-                return RedirectToAction("Index", "Home");
+                if (response.Success)
+                {
+                    var user = JsonConvert.DeserializeObject<CWUserData>(response.Data);
+                    HttpContext.Session.SetString("Login", user.username);
+                    HttpContext.Session.SetString("UserId", user.Id);
+                    UserId = user.Id;
+                    return RedirectToAction("CWCalender", "Home");
+                }
+                else
+                {
+                    HttpContext.Session.Remove("Login");
+                    return RedirectToAction("Index", "Home");
+                }
             }
         }
 
