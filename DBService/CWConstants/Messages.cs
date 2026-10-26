@@ -12,5 +12,7 @@ namespace DBService.CWConstants
 		public const string SuccesfullySubscribed = "Succesfully subscribed.";
 		public const string AttendanceSaved = "Attendance saved successfully.";
 		public const string AttendanceSavingFailed = "Attendance failed to save.";
-	}
+
+        
+    }
 }

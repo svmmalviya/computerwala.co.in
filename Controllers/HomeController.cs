@@ -306,6 +306,7 @@ namespace computerwala.Controllers
             return View("Privacy", calender);
         }
 
+        
 
         [HttpPost]
         public async Task<IActionResult> DateClick(AttendanceTime attendanceTime)

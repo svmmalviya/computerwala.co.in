@@ -118,8 +118,12 @@ namespace DBService.Models
         [ForeignKey("YearId")]
         public CWYear Year { get; set; }
 
+    }
 
-
+    public class CWLoginCredentials
+    {
+        public string Username { get; set; }
+        public string Pwd { get; set; }
     }
 
 

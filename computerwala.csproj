@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\ValuesController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="Areas\Sophisticated\Views\Admin\_ViewStart.cshtml" />
     <Content Remove="Views\Shared\_LayoutAdmin.cshtml" />
   </ItemGroup>

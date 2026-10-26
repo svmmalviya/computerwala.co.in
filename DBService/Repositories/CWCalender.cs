@@ -52,10 +52,7 @@ namespace DBService.Repositories
             }
 
         }
-        public CWCalender()
-        {
-
-        }
+       
 
         public async Task<ApiResponse> Subscribe(APICWSubscription subscription)
         {
